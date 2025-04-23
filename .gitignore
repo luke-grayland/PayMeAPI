@@ -1,8 +1,12 @@
 # Compiled class file
 *.class
 
+.vscode/
+
 # Log file
 *.log
+
+.DS_STORE
 
 # BlueJ files
 *.ctxt
