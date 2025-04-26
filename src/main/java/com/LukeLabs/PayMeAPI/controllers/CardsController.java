@@ -21,15 +21,14 @@ public class CardsController {
         this.cardProcessor = cardProcessor;
     }
 
-    @GetMapping()
+    @GetMapping
     public void getAllCards() {
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Card> postMethodName(@RequestBody CreateCardRequest createCardRequest) {
         try {
             var card = cardProcessor.createCard(createCardRequest);
-
             return ResponseEntity.ok(card);
         } catch (Exception e) {
             return ResponseEntity

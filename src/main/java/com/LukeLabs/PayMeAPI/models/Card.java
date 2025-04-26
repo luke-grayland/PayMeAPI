@@ -1,9 +1,17 @@
 package com.LukeLabs.PayMeAPI.models;
 
+import java.util.UUID;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Data;
 
 @Data
+@Document(collection = "cards")
 public class Card {
+    @Id
+    private UUID ID;
     private String cardNumber;
     private String cvv;
     private int expiryMonth;
