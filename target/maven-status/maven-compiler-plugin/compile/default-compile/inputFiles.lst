@@ -3,5 +3,13 @@
 /Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/extensions/CardExtensions.java
 /Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/Card.java
 /Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/CardControls.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/Result.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/requests/CardStatusUpdateRequest.java
 /Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/requests/CreateCardRequest.java
-/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/services/CardProcessor.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/responses/CreateCardResponse.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/models/responses/GetCardsByUserResponse.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/repositories/CardRepository.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/services/CreateCardProcessor.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/services/UpdateCardProcessor.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/services/ViewCardProcessor.java
+/Users/lukegrayland/Projects/PayMeAPI/src/main/java/com/LukeLabs/PayMeAPI/utilities/config/AppConfig.java
