@@ -1,5 +1,7 @@
 package com.LukeLabs.PayMeAPI.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import com.LukeLabs.PayMeAPI.services.ViewCardProcessor;
 public class CardsController {
     private final CreateCardProcessor createCardProcessor;
     private final ViewCardProcessor viewCardProcessor;
+    private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
 
     public CardsController(CreateCardProcessor createCardProcessor, ViewCardProcessor viewCardProcessor) {
         this.createCardProcessor = createCardProcessor;
@@ -32,6 +35,8 @@ public class CardsController {
             var response = viewCardProcessor.getCardsByUserID(userID);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error(e.getMessage());
+
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(null);
@@ -44,6 +49,8 @@ public class CardsController {
              var response = createCardProcessor.createCard(createCardRequest);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error(e.getMessage());
+            
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(null);
