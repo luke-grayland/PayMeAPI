@@ -1,4 +1,4 @@
-# Java Learning Project – REST API with Spring Boot & MongoDB
+# PayMe API (Spring Boot & MongoDB)
 
 This project is part of my effort to familiarise myself with modern Java practices by getting hands on with Spring Boot. I'm mapping concepts I already know from C#—like DI, async programming, and clean architecture—to their Java equivalents.
 
