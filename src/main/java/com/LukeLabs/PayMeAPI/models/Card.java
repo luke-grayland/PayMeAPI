@@ -1,5 +1,6 @@
 package com.LukeLabs.PayMeAPI.models;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -17,4 +18,7 @@ public class Card {
     private int expiryMonth;
     private int expiryYear;
     private double limit;
+    private int userID;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

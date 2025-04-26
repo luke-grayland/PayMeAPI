@@ -1,10 +1,12 @@
 package com.LukeLabs.PayMeAPI.repositories;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.UUID;
 
-@Service
-public class CardRepository {
-    public boolean StoreNewCard(Card card) {
-        
-    }
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.LukeLabs.PayMeAPI.models.Card;
+
+public interface CardRepository extends MongoRepository<Card, UUID> {
+    List<Card> findByUserID(int userID);
 }

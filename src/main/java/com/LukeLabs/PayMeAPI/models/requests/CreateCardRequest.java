@@ -7,8 +7,11 @@ import lombok.Data;
 
 @Data
 public class CreateCardRequest {
-    private String label;
+    @JsonProperty("userID")
     private int userID;
+    
+    @JsonProperty("label")
+    private String label;
     
     @JsonProperty("cardControls")
     private CardControls controls;
