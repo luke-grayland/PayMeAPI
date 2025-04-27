@@ -20,29 +20,27 @@ This project is part of my effort to familiarise myself with modern Java practic
     
 - **Logging:**
     
-    Implemented structured logging using SLF4J with Logback.
+    Implementeded structured logging using SLF4J with Logback.
+
+- **Async/Await Equivalent:**
+
+    Implemented asynchronous operations using `CompletableFuture` for non-blocking APIs.
+
+- **Use of Generics:**
+    
+    Explored Java generics in to enforce Result<T> pattern.
 
 ---
 
 ## 🛠️ Planned Features
 
-I plan to continue evolving this project with the following:
-
 - **Mutual TLS (mTLS):**
     
     Load and attach X.509 certificates to outbound HTTP requests using Java's `SSLContext` and `HttpClient`.
     
-- **Use of Generics:**
-    
-    Explore Java generics in differentvarious contexts, focusing on writing type-safe, flexible components and utilities.
-    
 - **LINQ Equivalent:**
     
     Utilise Java Streams API for data filtering, mapping, and transformation.
-    
-- **Async/Await Equivalent:**
-    
-    Implement asynchronous operations using `CompletableFuture` for non-blocking APIs.
     
 - **Caching:**
     
@@ -62,5 +60,5 @@ I plan to continue evolving this project with the following:
 
 Next up will be:
 
-- Functional programming with `Function`, `Predicate`, and other functional interfaces
+- Functional programming with `Function`, `Predicate`, and other functional interfaces.
 

@@ -1,5 +1,8 @@
 package com.LukeLabs.PayMeAPI.controllers;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,18 +39,18 @@ public class CardsController {
         this.updateCardProcessor = updateCardProcessor;
     }
 
-    @GetMapping("/?userID")
-    public ResponseEntity<GetCardsByUserResponse> getCardsByUser(@RequestParam("userID") int userID) {
-        try {
-            var response = viewCardProcessor.getCardsByUserID(userID);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
-        }
+    @GetMapping
+    public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
+        return viewCardProcessor.getCardsByUserID(userID)
+            .thenApply(response -> { 
+                return ResponseEntity.ok(response);
+            })
+            .exceptionally(ex -> {
+                logger.error("Error getting cards by user ID", ex);
+                return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+            });
     }
 
     @PostMapping
@@ -65,20 +68,22 @@ public class CardsController {
     }
 
     @PatchMapping("/{cardID}")
-    public ResponseEntity<Void> updateCardStatus(@PathVariable("cardID") int cardID, @RequestBody CardStatusUpdateRequest request) {
-        try {
-            var result = updateCardProcessor.updateCardStatus(cardID, request.getStatus());
+    public CompletableFuture<ResponseEntity<Object>> updateCardStatus(
+            @PathVariable("cardID") UUID cardID, 
+            @RequestBody CardStatusUpdateRequest request) {
 
-            if(result) {
-                return ResponseEntity.ok().build();
-            }
-
-            return ResponseEntity.internalServerError().build();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
-        }
+        return updateCardProcessor.updateCardStatus(cardID, request.getStatus())
+            .thenApply(result -> {
+                if (result) {
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            })
+            .exceptionally(ex -> {
+                logger.error("Error updating card status for cardID: " + cardID, ex);
+                return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+            });
     }
 }

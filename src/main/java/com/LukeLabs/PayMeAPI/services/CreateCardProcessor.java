@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.controllers.CardsController;
 import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
 import com.LukeLabs.PayMeAPI.models.Card;
@@ -40,6 +41,7 @@ public class CreateCardProcessor {
         card.setUserID(request.getUserID());
         card.setCardNumber(createCardNumber());
         card.setCvv(createCVV());
+        card.setStatus(CardStatusConstants.INACTIVE);
 
         cardRepository.save(card);
         logger.info(String.format("Card %s saved", card.getID()));

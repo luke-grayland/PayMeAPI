@@ -1,7 +1,10 @@
 package com.LukeLabs.PayMeAPI.services;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.LukeLabs.PayMeAPI.controllers.CardsController;
@@ -16,15 +19,18 @@ public class ViewCardProcessor {
     public ViewCardProcessor(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
     }
-
-    public GetCardsByUserResponse getCardsByUserID(int userID) {
+    
+    @Async
+    public CompletableFuture<GetCardsByUserResponse> getCardsByUserID(int userID) {
         logger.info(String.format("Finding cards associated to user: %s", userID));
-        var cards = cardRepository.findByUserID(userID);
-        logger.info(String.format("%s cards found", cards.size()));
+        
+        return cardRepository.findByUserIDAsync(userID)
+            .thenApply(cards -> {
+                logger.info(String.format("%s cards found", cards.size()));
 
-        var response = new GetCardsByUserResponse();
-        response.setCards(cards);
-
-        return response;
+                var response = new GetCardsByUserResponse();
+                response.setCards(cards);
+                return response;
+            });
     }
 }

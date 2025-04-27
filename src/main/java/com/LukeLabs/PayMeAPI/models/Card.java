@@ -21,4 +21,5 @@ public class Card {
     private int userID;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String status;
 }

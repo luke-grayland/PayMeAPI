@@ -2,11 +2,25 @@ package com.LukeLabs.PayMeAPI.repositories;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
+import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import com.LukeLabs.PayMeAPI.models.Card;
 
 public interface CardRepository extends MongoRepository<Card, UUID> {
-    List<Card> findByUserID(int userID);
+    @Override
+    public <S extends Card> S save(S entity);
+
+    @Async
+    @Query("{'userID': ?0}")
+    public CompletableFuture<List<Card>> findByUserIDAsync(int userID);
+
+    @Query("{'cardID': ?0}")
+    @Update("{'$set': {'status': ?1}}")
+    public CompletableFuture<Boolean> updateCardStatus(UUID cardID, @Param("status") String status);
 }

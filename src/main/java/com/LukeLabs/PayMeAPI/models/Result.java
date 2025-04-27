@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Result<T> {
-    private boolean success;
     private T data;
+    private Boolean success;
     private String errorMessage = "";
 }
