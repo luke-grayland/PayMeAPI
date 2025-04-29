@@ -1,8 +1,6 @@
 package com.LukeLabs.PayMeAPI.services;
 
-import java.time.LocalDateTime;
 import java.util.Random;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,51 +16,30 @@ import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 @Service
 public class CreateCardProcessor {
     private final CardRepository cardRepository;
-    private final Random random;
     private static final Logger logger = LoggerFactory.getLogger(CreateCardProcessor.class);
 
     public CreateCardProcessor(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
-        this.random = new Random();
     }
 
     public CreateCardResponse createCard(CreateCardRequest request) {
         logger.info("Creating new card for user: {}", request.getUserID());
-        var card = new Card();
-        var expiryDate = LocalDateTime.now().plusYears(2);
-
-        card.setID(UUID.randomUUID());
-        card.setLimit(request.getControls().getLimit());
-        card.setExpiryMonth(CardExtensions.MonthFromDateTime(expiryDate));
-        card.setExpiryYear(CardExtensions.YearFromDateTime(expiryDate));
-        card.setStartDate(request.getControls().getStartDate());
-        card.setEndDate(request.getControls().getEndDate());
-        card.setUserID(request.getUserID());
-        card.setCardNumber(createCardNumber());
-        card.setCvv(createCVV());
-        card.setStatus(CardStatusConstants.INACTIVE);
+        var card = new Card.Builder(
+                request.getControls().getLimit(),
+                request.getUserID(),
+                request.getControls().getStartDate(),
+                request.getControls().getEndDate())
+                .label(request.getLabel())
+                .status(CardStatusConstants.ACTIVE)
+                .authCountLimit(request.getControls().getAuthCountLimit())
+                .build();
 
         cardRepository.save(card);
-        logger.info(String.format("Card %s saved", card.getID()));
+        logger.info("Card {} saved", card.getID());
         
         var response = new CreateCardResponse();
         response.setCard(card);
 
         return response;
-    }
-
-    private String createCardNumber()
-    {
-        var cardNumber = new StringBuilder();
-        
-        for(var i=0; i<4; i++) {
-            cardNumber.append(Integer.toString(random.nextInt(1000, 9999)));
-        }
-        
-        return cardNumber.toString();
-    }
-
-    private String createCVV() {
-        return Integer.toString(random.nextInt(100, 999));
     }
 }
