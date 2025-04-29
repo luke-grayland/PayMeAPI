@@ -41,7 +41,7 @@ public class UpdateCardProcessor {
                 return false;
             }
             
-            cardRepository.updateCardStatus(cardID, status);
+//            cardRepository.updateCardStatus(cardID, status);
 
             return true;
         });

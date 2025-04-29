@@ -22,11 +22,11 @@ public class ViewCardProcessor {
     
     @Async
     public CompletableFuture<GetCardsByUserResponse> getCardsByUserID(int userID) {
-        logger.info(String.format("Finding cards associated to user: %s", userID));
-        
+        logger.info("Finding cards associated to user: {}", userID);
+
         return cardRepository.findByUserIDAsync(userID)
             .thenApply(cards -> {
-                logger.info(String.format("%s cards found", cards.size()));
+                logger.info("{} cards found", cards.size());
 
                 var response = new GetCardsByUserResponse();
                 response.setCards(cards);

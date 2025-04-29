@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
-import com.LukeLabs.PayMeAPI.controllers.CardsController;
 import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
 import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.requests.CreateCardRequest;
@@ -20,7 +19,7 @@ import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 public class CreateCardProcessor {
     private final CardRepository cardRepository;
     private final Random random;
-    private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreateCardProcessor.class);
 
     public CreateCardProcessor(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
@@ -28,7 +27,7 @@ public class CreateCardProcessor {
     }
 
     public CreateCardResponse createCard(CreateCardRequest request) {
-        logger.info(String.format("Creating new card for user: %s", request.getUserID()));
+        logger.info("Creating new card for user: {}", request.getUserID());
         var card = new Card();
         var expiryDate = LocalDateTime.now().plusYears(2);
 
