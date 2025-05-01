@@ -1,13 +1,10 @@
 package com.LukeLabs.PayMeAPI.services;
 
-import java.util.Random;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
-import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
 import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.requests.CreateCardRequest;
 import com.LukeLabs.PayMeAPI.models.responses.CreateCardResponse;

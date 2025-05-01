@@ -1,11 +1,11 @@
 package com.LukeLabs.PayMeAPI.models;
 
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.UUID;
 
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
+import com.LukeLabs.PayMeAPI.services.CardNumberGenerator;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,11 +28,10 @@ public class Card {
     private int authCountLimit;
 
     public static class Builder {
-        private final static Random random = new Random();
         private final LocalDateTime now = LocalDateTime.now();
 
-        private final String cardNumber = createCardNumber();
-        private final String cvv = createCVV();
+        private final String cardNumber = CardNumberGenerator.INSTANCE.createCardNumber();
+        private final String cvv = CardNumberGenerator.INSTANCE.createCVV();
         private final UUID ID = UUID.randomUUID();
         private final int expiryMonth = CardExtensions.MonthFromDateTime(now);
         private final int expiryYear = CardExtensions.YearFromDateTime(now);
@@ -67,21 +66,6 @@ public class Card {
 
         public Card build() {
             return new Card(this);
-        }
-
-        private String createCardNumber()
-        {
-            var cardNumber = new StringBuilder();
-
-            for(var i=0; i<4; i++) {
-                cardNumber.append(Integer.toString(random.nextInt(1000, 9999)));
-            }
-
-            return cardNumber.toString();
-        }
-
-        private String createCVV() {
-            return Integer.toString(random.nextInt(100, 999));
         }
     }
 
