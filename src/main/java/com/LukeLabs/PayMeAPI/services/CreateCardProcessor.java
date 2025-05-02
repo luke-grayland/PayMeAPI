@@ -33,7 +33,7 @@ public class CreateCardProcessor {
 
         cardRepository.save(card);
         logger.info("Card {} saved", card.getID());
-        
+
         var response = new CreateCardResponse();
         response.setCard(card);
 

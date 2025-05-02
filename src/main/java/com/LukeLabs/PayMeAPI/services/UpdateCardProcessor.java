@@ -28,24 +28,21 @@ public class UpdateCardProcessor {
     @Async
     public CompletableFuture<Boolean> updateCardStatus(UUID cardID, String status) {
         
-        var futureResult = kycService.GetKYCStatus(cardID).thenApply(getCardStatusResult -> {
-            if(!getCardStatusResult.getSuccess())
-            {
-                logger.error(String.format("Error fetching KYC status %s", getCardStatusResult.getErrorMessage()));
-                return false;
-            }
+        var kycStatusResult = kycService.GetKYCStatus(cardID);
 
-            if(!validKYCCodes.contains(getCardStatusResult.getData()))
-            {
-                logger.error("Unable to update card status due to pending KYC approval");
-                return false;
-            }
-            
-//            cardRepository.updateCardStatus(cardID, status);
+        if(!kycStatusResult.isSuccess()) {
+            logger.error("Error fetching KYC status {}", kycStatusResult.getErrorMessage());
+            return CompletableFuture.completedFuture(false);
+        }
 
-            return true;
-        });
-        
-        return futureResult;
+        if(!validKYCCodes.contains(kycStatusResult.getData()))
+        {
+            logger.error("Unable to update card status due to pending KYC approval");
+            return CompletableFuture.completedFuture(false);
+        }
+
+        // cardRepository.updateCardStatus(cardID, status);
+
+        return CompletableFuture.completedFuture(true);
     }
 }
