@@ -1,7 +1,9 @@
 package com.LukeLabs.PayMeAPI.services;
 
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.models.Card;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -29,7 +31,8 @@ public class ViewCardProcessor {
                 logger.info("{} cards found", cards.size());
 
                 var response = new GetCardsByUserResponse();
-                response.setCards(cards);
+                var cardsByStartDate = cards.stream().sorted(Comparator.comparing(Card::getStartDate)).toList();
+                response.setCards(cardsByStartDate);
                 return response;
             });
     }

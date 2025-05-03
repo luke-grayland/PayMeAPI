@@ -1,11 +1,12 @@
 package com.LukeLabs.PayMeAPI.services;
 
+import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
+import com.LukeLabs.PayMeAPI.mappers.CardMapper;
+import com.LukeLabs.PayMeAPI.models.ProvisionedCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
-import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.requests.CreateCardRequest;
 import com.LukeLabs.PayMeAPI.models.responses.CreateCardResponse;
 import com.LukeLabs.PayMeAPI.repositories.CardRepository;
@@ -20,8 +21,9 @@ public class CreateCardProcessor {
     }
 
     public CreateCardResponse createCard(CreateCardRequest request) {
+
         logger.info("Creating new card for user: {}", request.getUserID());
-        var card = new Card.Builder(
+        var provisionedCard = new ProvisionedCard.Builder(
                 request.getControls().getLimit(),
                 request.getUserID(),
                 request.getControls().getStartDate(),
@@ -31,6 +33,7 @@ public class CreateCardProcessor {
                 .authCountLimit(request.getControls().getAuthCountLimit())
                 .build();
 
+        var card = CardMapper.Map(provisionedCard);
         cardRepository.save(card);
         logger.info("Card {} saved", card.getID());
 
