@@ -2,14 +2,12 @@ package com.LukeLabs.PayMeAPI.mappers;
 
 import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.ProvisionedCard;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CardMapper {
 
-    private CardMapper() {
-        throw new AssertionError("Utility mapper class cannot be instantiated");
-    }
-
-    public static Card Map (ProvisionedCard provisionedCard) {
+    public Card Map (ProvisionedCard provisionedCard) {
         Card card = new Card();
 
         card.setID(provisionedCard.getID());

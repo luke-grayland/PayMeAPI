@@ -1,0 +1,10 @@
+8a66059d-1fd0-44ff-a4f7-d3e39ff053ac 0  25.87         USD  Virgin Airways                       2025-05-03 080251 aeba970d-151a-4a17-b3bd-c2a499cb563d
+424b47eb-6a64-4c12-a9d4-16ebe542aeb5 4  666.98        GBP  British Airways                      2025-02-16 210715 aeba970d-151a-4a17-b3bd-c2a499cb563d
+215c25fd-d6b7-42bf-8c00-8add480d43b3 3  1005.77       EUR  John Lewis Victoria Street           2025-01-19 182552 aeba970d-151a-4a17-b3bd-c2a499cb563d
+b1e57fc0-dc45-4f75-9400-b430d88da991 1  5.20          EUR  Hilton Budapest                      2025-04-23 090414 aeba970d-151a-4a17-b3bd-c2a499cb563d
+a9c35039-5233-4b4f-a1be-1feeab49c6a2 2  6.80          USD  JFK Airport Starbucks                2025-03-08 170252 aeba970d-151a-4a17-b3bd-c2a499cb563d
+d2de7a19-1df2-4843-82db-83f1b4c4ddc6 3  98.25         BRL  Windsor Plaza Hotel                  2025-02-14 184623 aeba970d-151a-4a17-b3bd-c2a499cb563d
+e0f6ff0e-8848-4335-801b-d16445f20c56 1  20.00         USD  Ramada Encore Bar Washington         2025-02-24 102235 e62496a6-ba27-43d7-a680-23ae05125073
+89178edd-2cb3-4f5f-9ce2-db344707082a 1  12.55         BRL  Pousada Pedra Azul Hotel             2025-01-05 150007 e62496a6-ba27-43d7-a680-23ae05125073
+2ead1403-92cd-4086-8fd7-a1758326f9dd 0  41.60         GBP  Enterprise Rent-A-Car Manchester     2025-02-14 111434 e62496a6-ba27-43d7-a680-23ae05125073
+dd1bc041-51dd-4f2f-838c-312a74a1aac6 2  975.30        GBP  Sixt Car Hire Birmingham Central     2025-04-04 125344 e62496a6-ba27-43d7-a680-23ae05125073

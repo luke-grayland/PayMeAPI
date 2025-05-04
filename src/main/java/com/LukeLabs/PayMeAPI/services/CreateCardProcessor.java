@@ -15,9 +15,11 @@ import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 public class CreateCardProcessor {
     private final CardRepository cardRepository;
     private static final Logger logger = LoggerFactory.getLogger(CreateCardProcessor.class);
+    private final CardMapper cardMapper;
 
-    public CreateCardProcessor(CardRepository cardRepository) {
+    public CreateCardProcessor(CardRepository cardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
+        this.cardMapper = cardMapper;
     }
 
     public CreateCardResponse createCard(CreateCardRequest request) {
@@ -33,7 +35,7 @@ public class CreateCardProcessor {
                 .authCountLimit(request.getControls().getAuthCountLimit())
                 .build();
 
-        var card = CardMapper.Map(provisionedCard);
+        var card = cardMapper.Map(provisionedCard);
         cardRepository.save(card);
         logger.info("Card {} saved", card.getID());
 
