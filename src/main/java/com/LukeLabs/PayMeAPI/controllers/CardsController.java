@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,12 +40,11 @@ public class CardsController {
         this.updateCardProcessor = updateCardProcessor;
     }
 
+    @Tag(name = "Get Cards", description = "Return all cards associated to a user")
     @GetMapping
     public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
         return viewCardProcessor.getCardsByUserID(userID)
-            .thenApply(response -> { 
-                return ResponseEntity.ok(response);
-            })
+            .thenApply(ResponseEntity::ok)
             .exceptionally(ex -> {
                 logger.error("Error getting cards by user ID", ex);
                 return ResponseEntity
@@ -53,6 +53,7 @@ public class CardsController {
             });
     }
 
+    @Tag(name = "Create Card", description = "Create a new card")
     @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
         try {
@@ -67,6 +68,7 @@ public class CardsController {
         }
     }
 
+    @Tag(name = "Update Card Status", description = "Update the status of an existing card")
     @PatchMapping("/{cardID}")
     public CompletableFuture<ResponseEntity<Object>> updateCardStatus(
             @PathVariable("cardID") UUID cardID, 
