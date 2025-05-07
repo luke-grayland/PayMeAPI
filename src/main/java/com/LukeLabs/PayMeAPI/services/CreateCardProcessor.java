@@ -37,7 +37,7 @@ public class CreateCardProcessor {
 
         var card = cardMapper.Map(provisionedCard);
         cardRepository.save(card);
-        logger.info("Card {} saved", card.getID());
+        logger.info("Card saved: {}", card);
 
         var response = new CreateCardResponse();
         response.setCard(card);
