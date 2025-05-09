@@ -2,6 +2,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 
 import com.LukeLabs.PayMeAPI.models.responses.GetCardTransactionsResponse;
 import com.LukeLabs.PayMeAPI.services.TransactionProcessor;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,8 @@ public class TransactionController {
         this.transactionProcessor = transactionProcessor;
     }
 
-    @Tag(name = "Get Transactions", description = "Find all file based transaction associated to a card")
+    @Tag(name = "Transactions", description = "Find all file based transaction associated to a card")
+    @Operation(summary = "Find transactions", description = "Find all file based transaction associated to a card")
     @GetMapping("/{cardId}")
     public ResponseEntity<GetCardTransactionsResponse> getTransactions(@PathVariable String cardId) {
         try {
