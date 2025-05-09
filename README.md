@@ -2,6 +2,9 @@
 
 This project is part of my effort to familiarise myself with modern Java practices by getting hands on with Spring Boot. I'm mapping concepts I already know from C#—like DI, async programming, and clean architecture—to their Java equivalents.
 
+**Live Demo/Swagger Documentation (Hosted on AWS using Elastic Beanstalk):**
+http://paymeapi.eu-north-1.elasticbeanstalk.com/swagger
+
 ---
 
 ## ✅ Implemented Functionality
@@ -20,7 +23,7 @@ This project is part of my effort to familiarise myself with modern Java practic
     
 - **Logging:**
     
-    Implementeded structured logging using SLF4J with Logback.
+    Implemented structured logging using SLF4J with Logback.
 
 - **Async/Await Equivalent:**
 

@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,8 @@ public class CardsController {
         this.updateCardProcessor = updateCardProcessor;
     }
 
-    @Tag(name = "Get Cards", description = "Return all cards associated to a user")
+    @Tag(name = "Cards", description = "Create and manage cards")
+    @Operation(summary = "Return cards by user", description = "Return all cards associated to a specified user")
     @GetMapping
     public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
         return viewCardProcessor.getCardsByUserID(userID)
@@ -53,7 +55,8 @@ public class CardsController {
             });
     }
 
-    @Tag(name = "Create Card", description = "Create a new card")
+    @Tag(name = "Cards", description = "Create and manage cards")
+    @Operation(summary = "Create a new card", description = "Create a new card for a specified user")
     @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
         try {
@@ -68,7 +71,8 @@ public class CardsController {
         }
     }
 
-    @Tag(name = "Update Card Status", description = "Update the status of an existing card")
+    @Tag(name = "Cards", description = "Create and manage cards")
+    @Operation(summary = "Update card status", description = "Update the status of a single card")
     @PatchMapping("/{cardID}")
     public CompletableFuture<ResponseEntity<Object>> updateCardStatus(
             @PathVariable("cardID") UUID cardID, 
