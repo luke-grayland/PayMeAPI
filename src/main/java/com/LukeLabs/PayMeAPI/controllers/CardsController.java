@@ -74,22 +74,26 @@ public class CardsController {
     @Tag(name = "Cards", description = "Create and manage cards")
     @Operation(summary = "Update card status", description = "Update the status of a single card")
     @PatchMapping("/{cardID}")
-    public CompletableFuture<ResponseEntity<Object>> updateCardStatus(
+    public CompletableFuture<ResponseEntity<String>> updateCardStatus(
             @PathVariable("cardID") UUID cardID, 
             @RequestBody CardStatusUpdateRequest request) {
 
-        return updateCardProcessor.updateCardStatus(cardID, request.getStatus())
+        return updateCardProcessor.updateCardStatus(cardID, request)
             .thenApply(result -> {
-                if (result) {
-                    return ResponseEntity.ok().build();
+                if (result.isSuccess()) {
+                    var message = String.format("Successfully updated the card with ID %s", cardID);
+                    logger.info(message);
+                    return ResponseEntity.ok().body(message);
                 }
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(result.getErrorMessage());
             })
             .exceptionally(ex -> {
-                logger.error("Error updating card status for cardID: " + cardID, ex);
+                var errorMessage = "Error updating card status for cardID: " + cardID;
+                logger.error(errorMessage, ex);
                 return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(errorMessage);
             });
     }
 }
