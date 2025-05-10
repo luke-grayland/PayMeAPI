@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 @Service
@@ -37,15 +38,22 @@ public class TransactionProcessor {
 
         if(fileLines.isEmpty()) return response;
 
+        Optional<List<String>> matchingTransactions = GetMatchingTransactions(fileLines, cardId);
+        if(matchingTransactions.isEmpty()) return response;
+
+        var mappedTransactions = transactionMapper.MapTransactions(matchingTransactions.get());
+        response.setTransactions(mappedTransactions);
+
+        return response;
+    }
+
+    private Optional<List<String>> GetMatchingTransactions(List<String> fileLines, String cardId) {
         var matchingTransactions = fileLines.stream().filter(line ->
                 line.substring(TransactionFileDefinition.CardId_Start, TransactionFileDefinition.CardId_End)
                         .equals(cardId)).toList();
 
-        if(matchingTransactions.isEmpty()) return response;
+        if(matchingTransactions.isEmpty()) return Optional.empty();
 
-        var mappedTransactions = transactionMapper.MapTransactions(matchingTransactions);
-        response.setTransactions(mappedTransactions);
-
-        return response;
+        return Optional.of(matchingTransactions);
     }
 }

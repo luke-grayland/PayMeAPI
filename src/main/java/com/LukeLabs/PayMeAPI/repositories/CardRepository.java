@@ -10,10 +10,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.scheduling.annotation.Async;
 
 public interface CardRepository extends MongoRepository<Card, UUID> {
-    @Override
-    public <S extends Card> S save(S entity);
-
     @Async
     @Query("{'userID': ?0}")
-    public CompletableFuture<List<Card>> findByUserIDAsync(int userID);
+    CompletableFuture<List<Card>> findByUserIDAsync(int userID);
 }

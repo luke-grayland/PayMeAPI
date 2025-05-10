@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.models.Card;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -95,5 +96,23 @@ public class CardsController {
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(errorMessage);
             });
+    }
+
+    @Tag(name = "Cards", description = "Create and manage cards")
+    @Operation(summary = "Get card details", description = "Get card by card ID")
+    @GetMapping("/{cardId}")
+    public ResponseEntity<Card> getCardDetails(@PathVariable("cardId") UUID cardID) {
+        try {
+            var result = viewCardProcessor.getCardByCardID(cardID);
+
+            if(!result.isSuccess()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            return ResponseEntity.ok(result.getData());
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

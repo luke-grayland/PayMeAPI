@@ -1,9 +1,11 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.requests.CardStatusUpdateRequest;
 import org.slf4j.Logger;
@@ -44,7 +46,14 @@ public class UpdateCardProcessor {
             return CompletableFuture.completedFuture(Result.failure(errorMessage));
         }
 
-        // cardRepository.updateCardStatus(cardID, request.getStatus());
+        Optional<Card> card = cardRepository.findById(cardID);
+        if(card.isEmpty()) {
+            return CompletableFuture.completedFuture(Result.failure("Card not found"));
+        }
+
+        card.get().setStatus(request.getStatus());
+        cardRepository.save(card.get());
+        logger.info("Card updated successfully");
 
         return CompletableFuture.completedFuture(Result.success(true));
     }

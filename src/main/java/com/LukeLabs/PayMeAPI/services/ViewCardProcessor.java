@@ -1,9 +1,11 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import java.util.Comparator;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.LukeLabs.PayMeAPI.models.Card;
+import com.LukeLabs.PayMeAPI.models.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -35,5 +37,13 @@ public class ViewCardProcessor {
                 response.setCards(cardsByStartDate);
                 return response;
             });
+    }
+
+    public Result<Card> getCardByCardID(UUID cardID) {
+        logger.info("Finding card with ID: {}", cardID);
+        var card = cardRepository.findById(cardID);
+
+        return card.map(Result::success).orElseGet(() ->
+                Result.failure("Card with ID " + cardID + " not found"));
     }
 }
