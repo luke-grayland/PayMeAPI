@@ -31,3 +31,5 @@ application.properties
 hs_err_pid*
 replay_pid*
 /target/
+/src/main/resources/application-prod.properties
+/src/main/resources/application-dev.properties

@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.models.Card;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -74,22 +75,44 @@ public class CardsController {
     @Tag(name = "Cards", description = "Create and manage cards")
     @Operation(summary = "Update card status", description = "Update the status of a single card")
     @PatchMapping("/{cardID}")
-    public CompletableFuture<ResponseEntity<Object>> updateCardStatus(
+    public CompletableFuture<ResponseEntity<String>> updateCardStatus(
             @PathVariable("cardID") UUID cardID, 
             @RequestBody CardStatusUpdateRequest request) {
 
-        return updateCardProcessor.updateCardStatus(cardID, request.getStatus())
+        return updateCardProcessor.updateCardStatus(cardID, request)
             .thenApply(result -> {
-                if (result) {
-                    return ResponseEntity.ok().build();
+                if (result.isSuccess()) {
+                    var message = String.format("Successfully updated the card with ID %s", cardID);
+                    logger.info(message);
+                    return ResponseEntity.ok().body(message);
                 }
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(result.getErrorMessage());
             })
             .exceptionally(ex -> {
-                logger.error("Error updating card status for cardID: " + cardID, ex);
+                var errorMessage = "Error updating card status for cardID: " + cardID;
+                logger.error(errorMessage, ex);
                 return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(errorMessage);
             });
+    }
+
+    @Tag(name = "Cards", description = "Create and manage cards")
+    @Operation(summary = "Get card details", description = "Get card by card ID")
+    @GetMapping("/{cardId}")
+    public ResponseEntity<Card> getCardDetails(@PathVariable("cardId") UUID cardID) {
+        try {
+            var result = viewCardProcessor.getCardByCardID(cardID);
+
+            if(!result.isSuccess()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            return ResponseEntity.ok(result.getData());
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
