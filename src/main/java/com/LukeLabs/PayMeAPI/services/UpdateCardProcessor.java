@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.functionalInterfaces.UpdateCardStatusNotifier;
 import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.requests.CardStatusUpdateRequest;
@@ -22,15 +23,21 @@ public class UpdateCardProcessor {
     private final static List<Integer> validKYCCodes = List.of(KYCStatus.APPROVED, KYCStatus.PRE_APPROVED);
     private final KYCService kycService;
     private final CardRepository cardRepository;
+    private final NotificationService notificationService;
 
-    public UpdateCardProcessor(KYCService kycService, CardRepository cardRepository) {
+    public UpdateCardProcessor(KYCService kycService, CardRepository cardRepository, NotificationService notificationService) {
         this.kycService = kycService;
         this.cardRepository = cardRepository;
+        this.notificationService = notificationService;
     }
 
     @Async
     public CompletableFuture<Result<Boolean>> updateCardStatus(UUID cardID, CardStatusUpdateRequest request) {
-        
+
+        UpdateCardStatusNotifier notifier = (UUID cardRef, String status) -> {
+            notificationService.QueueNotification(cardRef, "Updated to " + status);
+        };
+
         var kycStatusResult = kycService.GetKYCStatus(request.getUserId());
 
         if(!kycStatusResult.isSuccess()) {
@@ -54,6 +61,8 @@ public class UpdateCardProcessor {
         card.get().setStatus(request.getStatus());
         cardRepository.save(card.get());
         logger.info("Card updated successfully");
+
+        notifier.queueNotification(cardID, request.getStatus());
 
         return CompletableFuture.completedFuture(Result.success(true));
     }
