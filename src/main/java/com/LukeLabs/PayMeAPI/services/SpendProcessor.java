@@ -25,8 +25,8 @@ public class SpendProcessor {
 
         spendRepository.save(newSpend);
 
-        if(!request.getSpendCategory().equals("egaming")) {
-            //trigger safe bet
+        //Trigger SafeBet functionality
+        if(request.getSpendCategory().equals("egaming")) {
             List<Spend> allCardSpend = spendRepository.findSpendByCardId(request.getCardId());
             //find all spend associated to card
             //if total spend is above x amount, or if spend frequency exceeds threshold, set card to block
