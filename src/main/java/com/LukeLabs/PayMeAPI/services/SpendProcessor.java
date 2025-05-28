@@ -1,35 +1,65 @@
 package com.LukeLabs.PayMeAPI.services;
 
+import com.LukeLabs.PayMeAPI.mappers.SpendMapper;
 import com.LukeLabs.PayMeAPI.models.Spend;
+import com.LukeLabs.PayMeAPI.models.documents.SpendDocument;
 import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
 import com.LukeLabs.PayMeAPI.repositories.SpendRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class SpendProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(SpendProcessor.class);
     private final SpendRepository spendRepository;
+    private final SpendMapper spendMapper;
+    private static final double PER_DAY_TOTAL_SPEND_LIMIT = 1000;
+    private static final double PER_DAY_SPEND_COUNT_LIMIT = 5;
+    private static final List<String> SAFE_BET_CATEGORIES = List.of("egaming");
 
-    public SpendProcessor(SpendRepository spendRepository) {
+    public SpendProcessor(SpendRepository spendRepository, SpendMapper spendMapper) {
         this.spendRepository = spendRepository;
+        this.spendMapper = spendMapper;
     }
 
     public Boolean logSpend(LogSpendRequest request) {
-
         var newSpend = new Spend.Builder(
                 request.getCardId(),
                 request.getSpendCategory(),
-                request.getAmount())
+                request.getAmount(),
+                request.getDatetime())
                 .build();
 
-        spendRepository.save(newSpend);
+        var spendDocument = spendMapper.MapSpend(newSpend);
+        spendRepository.save(spendDocument);
 
-        //Trigger SafeBet functionality
-        if(request.getSpendCategory().equals("egaming")) {
-            List<Spend> allCardSpend = spendRepository.findSpendByCardId(request.getCardId());
-            //find all spend associated to card
-            //if total spend is above x amount, or if spend frequency exceeds threshold, set card to block
+        boolean safeBetBlockRequired = false;
+
+        if(SAFE_BET_CATEGORIES.contains(request.getSpendCategory())) {
+            var fromDateTime = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+            List<SpendDocument> recentSpends = spendRepository
+                    .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
+
+            if(recentSpends.size() > PER_DAY_SPEND_COUNT_LIMIT) {
+                safeBetBlockRequired = true;
+            }
+
+            if(!safeBetBlockRequired) {
+                double spendTotal = 0;
+                for (var spend : recentSpends) { spendTotal += spend.getAmount(); }
+
+                if(spendTotal > 1000) {
+                    safeBetBlockRequired = true;
+                }
+            }
+
+            if(safeBetBlockRequired) {
+                //write block card functionality
+            }
         }
 
         return true;
