@@ -21,10 +21,12 @@ public class SpendProcessor {
     private static final double PER_DAY_TOTAL_SPEND_LIMIT = 1000;
     private static final double PER_DAY_SPEND_COUNT_LIMIT = 5;
     private static final List<String> SAFE_BET_CATEGORIES = List.of("egaming");
+    private final SpendNotificationService spendNotificationService;
 
-    public SpendProcessor(SpendRepository spendRepository, SpendMapper spendMapper) {
+    public SpendProcessor(SpendRepository spendRepository, SpendMapper spendMapper, SpendNotificationService spendNotificationService) {
         this.spendRepository = spendRepository;
         this.spendMapper = spendMapper;
+        this.spendNotificationService = spendNotificationService;
     }
 
     public Result<Boolean> logSpend(LogSpendRequest request) {
@@ -70,7 +72,7 @@ public class SpendProcessor {
             }
         }
 
-        logger.info(String.format("Spend against card %s successfully stored", request.getCardId()));
+        spendNotificationService.QueueNotification(request.getCardId(), "Spend successfully stored");
         return Result.success(true);
     }
 }
