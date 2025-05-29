@@ -4,6 +4,7 @@ import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
 import com.LukeLabs.PayMeAPI.services.SpendProcessor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,16 @@ public class SpendController {
     @Tag(name = "Spend", description = "Managee spend occurrences")
     @Operation(summary = "Log spend", description = "Logs a spend against a card")
     @PostMapping
-    public ResponseEntity<Boolean> logSpend(@RequestBody LogSpendRequest request) {
+    public ResponseEntity<Boolean> logSpend(@RequestBody @Valid LogSpendRequest request) {
         try {
             var response = logSpendProcessor.logSpend(request);
-            return ResponseEntity.ok(response);
+
+            if(!response.isSuccess()) {
+                return ResponseEntity.badRequest().body(response.getData());
+            }
+
+            return ResponseEntity.ok(response.getData());
+
         } catch (Exception e) {
             logger.error(e.getMessage());
 

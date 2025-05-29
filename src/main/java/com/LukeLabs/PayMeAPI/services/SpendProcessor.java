@@ -1,6 +1,7 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.mappers.SpendMapper;
+import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.Spend;
 import com.LukeLabs.PayMeAPI.models.documents.SpendDocument;
 import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
@@ -26,7 +27,7 @@ public class SpendProcessor {
         this.spendMapper = spendMapper;
     }
 
-    public Boolean logSpend(LogSpendRequest request) {
+    public Result<Boolean> logSpend(LogSpendRequest request) {
         var newSpend = new Spend.Builder(
                 request.getCardId(),
                 request.getSpendCategory(),
@@ -34,7 +35,7 @@ public class SpendProcessor {
                 request.getDatetime())
                 .build();
 
-        var spendDocument = spendMapper.MapSpend(newSpend);
+        SpendDocument spendDocument = spendMapper.MapSpend(newSpend);
         spendRepository.save(spendDocument);
 
         boolean safeBetBlockRequired = false;
@@ -44,7 +45,13 @@ public class SpendProcessor {
             List<SpendDocument> recentSpends = spendRepository
                     .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
 
+            if(recentSpends.isEmpty()) {
+                logger.info("No recent spend data found - SafeBet block not required");
+                return Result.success(true);
+            }
+
             if(recentSpends.size() > PER_DAY_SPEND_COUNT_LIMIT) {
+                logger.info("Recent spend count exceeds limit - SafeBet block required");
                 safeBetBlockRequired = true;
             }
 
@@ -52,7 +59,8 @@ public class SpendProcessor {
                 double spendTotal = 0;
                 for (var spend : recentSpends) { spendTotal += spend.getAmount(); }
 
-                if(spendTotal > 1000) {
+                if(spendTotal > PER_DAY_TOTAL_SPEND_LIMIT) {
+                    logger.info("Recent spend total amount exceeds limit - SafeBet block required");
                     safeBetBlockRequired = true;
                 }
             }
@@ -62,6 +70,7 @@ public class SpendProcessor {
             }
         }
 
-        return true;
+        logger.info(String.format("Spend against card %s successfully stored", request.getCardId()));
+        return Result.success(true);
     }
 }

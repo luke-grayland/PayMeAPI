@@ -12,6 +12,7 @@ public class SpendMapper {
         result.setAmount(spend.getAmount());
         result.setCardId(spend.getCardId());
         result.setSpendCategory(spend.getSpendCategory());
+        result.setDateTime(spend.getDateTime());
         return result;
     }
 }
