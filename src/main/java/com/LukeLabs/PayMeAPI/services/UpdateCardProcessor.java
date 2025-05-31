@@ -1,12 +1,10 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import com.LukeLabs.PayMeAPI.functionalInterfaces.UpdateCardStatusNotifier;
-import com.LukeLabs.PayMeAPI.models.Card;
+import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.requests.CardStatusUpdateRequest;
 import org.slf4j.Logger;
@@ -15,28 +13,25 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.LukeLabs.PayMeAPI.constants.KYCStatus;
-import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 
 @Service
 public class UpdateCardProcessor {
     private static final Logger logger = LoggerFactory.getLogger(UpdateCardProcessor.class);
     private final static List<Integer> validKYCCodes = List.of(KYCStatus.APPROVED, KYCStatus.PRE_APPROVED);
     private final KYCService kycService;
-    private final CardRepository cardRepository;
-    private final NotificationService notificationService;
+    private final CardStatusUpdateService cardStatusUpdateService;
 
-    public UpdateCardProcessor(KYCService kycService, CardRepository cardRepository, NotificationService notificationService) {
+    public UpdateCardProcessor(KYCService kycService, CardStatusUpdateService cardStatusUpdateService) {
         this.kycService = kycService;
-        this.cardRepository = cardRepository;
-        this.notificationService = notificationService;
+        this.cardStatusUpdateService = cardStatusUpdateService;
     }
 
     @Async
-    public CompletableFuture<Result<Boolean>> updateCardStatus(UUID cardID, CardStatusUpdateRequest request) {
+    public CompletableFuture<Result<String>> updateCardStatus(UUID cardID, CardStatusUpdateRequest request) {
 
-        UpdateCardStatusNotifier notifier = (UUID cardRef, String status) -> {
-            notificationService.QueueNotification(cardRef, "Updated to " + status);
-        };
+        if(!CardStatusConstants.all.contains(request.getStatus())) {
+            return CompletableFuture.completedFuture(Result.failure("Invalid card status"));
+        }
 
         var kycStatusResult = kycService.GetKYCStatus(request.getUserId());
 
@@ -53,17 +48,6 @@ public class UpdateCardProcessor {
             return CompletableFuture.completedFuture(Result.failure(errorMessage));
         }
 
-        Optional<Card> card = cardRepository.findById(cardID);
-        if(card.isEmpty()) {
-            return CompletableFuture.completedFuture(Result.failure("Card not found"));
-        }
-
-        card.get().setStatus(request.getStatus());
-        cardRepository.save(card.get());
-        logger.info("Card updated successfully");
-
-        notifier.queueNotification(cardID, request.getStatus());
-
-        return CompletableFuture.completedFuture(Result.success(true));
+        return cardStatusUpdateService.UpdateStaus(cardID, request.getStatus());
     }
 }

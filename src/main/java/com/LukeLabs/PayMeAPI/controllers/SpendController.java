@@ -27,12 +27,12 @@ public class SpendController {
     @Tag(name = "Spend", description = "Managee spend occurrences")
     @Operation(summary = "Log spend", description = "Logs a spend against a card")
     @PostMapping
-    public ResponseEntity<Boolean> logSpend(@RequestBody @Valid LogSpendRequest request) {
+    public ResponseEntity<String> logSpend(@RequestBody @Valid LogSpendRequest request) {
         try {
             var response = logSpendProcessor.logSpend(request);
 
             if(!response.isSuccess()) {
-                return ResponseEntity.badRequest().body(response.getData());
+                return ResponseEntity.badRequest().body(response.getErrorMessage());
             }
 
             return ResponseEntity.ok(response.getData());
