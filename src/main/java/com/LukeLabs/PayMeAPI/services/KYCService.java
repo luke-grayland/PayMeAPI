@@ -1,6 +1,5 @@
 package com.LukeLabs.PayMeAPI.services;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import com.LukeLabs.PayMeAPI.models.Result;
 
 @Service
 public class KYCService {
-    private static final List<Integer> BlockedKYCUsers = Arrays.asList(123, 456, 789);
+    private static final List<Integer> BlockedKYCUsers = List.of(123, 456, 789);
     private static final HashMap<Integer, Integer> PreviouslyCheckedUsers = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(KYCService.class);
 
