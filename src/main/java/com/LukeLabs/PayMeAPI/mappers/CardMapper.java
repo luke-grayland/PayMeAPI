@@ -21,7 +21,6 @@ public class CardMapper {
         card.setEndDate(provisionedCard.getEndDate());
         card.setStatus(provisionedCard.getStatus());
         card.setLabel(provisionedCard.getLabel());
-        card.setAuthCountLimit(provisionedCard.getAuthCountLimit());
 
         return card;
     }

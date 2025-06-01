@@ -3,9 +3,9 @@ package com.LukeLabs.PayMeAPI.controllers;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.Card;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,8 +42,10 @@ public class CardsController {
         this.updateCardProcessor = updateCardProcessor;
     }
 
-    @Tag(name = "Cards", description = "Create and manage cards")
-    @Operation(summary = "Return cards by user", description = "Return all cards associated to a specified user")
+    @Operation(
+            summary = "Return cards by user",
+            description = "Return all cards associated to a specified user",
+            tags = { SwaggerConstants.Tags.Cards })
     @GetMapping
     public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
         return viewCardProcessor.getCardsByUserID(userID)
@@ -56,8 +58,10 @@ public class CardsController {
             });
     }
 
-    @Tag(name = "Cards", description = "Create and manage cards")
-    @Operation(summary = "Create a new card", description = "Create a new card for a specified user")
+    @Operation(
+            summary = "Create a new card",
+            description = "Create a new card for a specified user",
+            tags = { SwaggerConstants.Tags.Cards })
     @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
         try {
@@ -72,8 +76,10 @@ public class CardsController {
         }
     }
 
-    @Tag(name = "Cards", description = "Create and manage cards")
-    @Operation(summary = "Update card status", description = "Update the status of a single card")
+    @Operation(
+            summary = "Update card status",
+            description = "Update the status of a single card",
+            tags = { SwaggerConstants.Tags.Cards })
     @PatchMapping("/{cardID}")
     public CompletableFuture<ResponseEntity<String>> updateCardStatus(
             @PathVariable("cardID") UUID cardID, 
@@ -98,8 +104,10 @@ public class CardsController {
             });
     }
 
-    @Tag(name = "Cards", description = "Create and manage cards")
-    @Operation(summary = "Get card details", description = "Get card by card ID")
+    @Operation(
+            summary = "Get card details",
+            description = "Get card by card ID",
+            tags = { SwaggerConstants.Tags.Cards })
     @GetMapping("/{cardId}")
     public ResponseEntity<Card> getCardDetails(@PathVariable("cardId") UUID cardID) {
         try {

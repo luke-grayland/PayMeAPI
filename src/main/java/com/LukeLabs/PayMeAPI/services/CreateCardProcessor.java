@@ -41,7 +41,6 @@ public class CreateCardProcessor {
                 request.getControls().getEndDate())
                 .label(request.getLabel())
                 .status(CardStatusConstants.ACTIVE)
-                .authCountLimit(request.getControls().getAuthCountLimit())
                 .build();
 
         var card = cardMapper.Map(provisionedCard);

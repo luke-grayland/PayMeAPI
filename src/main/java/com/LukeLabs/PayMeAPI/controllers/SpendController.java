@@ -1,9 +1,9 @@
 package com.LukeLabs.PayMeAPI.controllers;
 
+import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
 import com.LukeLabs.PayMeAPI.services.SpendProcessor;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,7 @@ public class SpendController {
         this.logSpendProcessor = logSpendProcessor;
     }
 
-    @Tag(name = "Spend", description = "Managee spend occurrences")
-    @Operation(summary = "Log spend", description = "Logs a spend against a card")
+    @Operation(summary = "Log spend", description = "Logs a spend against a card", tags = { SwaggerConstants.Tags.Spend })
     @PostMapping
     public ResponseEntity<String> logSpend(@RequestBody @Valid LogSpendRequest request) {
         try {
