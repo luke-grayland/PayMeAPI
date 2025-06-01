@@ -21,7 +21,6 @@ public class ProvisionedCard {
     private final LocalDateTime endDate;
     private final String status;
     private final String label;
-    private final int authCountLimit;
 
     public static class Builder {
         private final LocalDateTime now = LocalDateTime.now();
@@ -39,7 +38,6 @@ public class ProvisionedCard {
 
         private String label = "";
         private String status = CardStatusConstants.INACTIVE;
-        private int authCountLimit = 0;
 
         public Builder(double limit, int userID, LocalDateTime startDate, LocalDateTime endDate) {
             this.limit = limit;
@@ -49,8 +47,6 @@ public class ProvisionedCard {
         }
 
         public Builder label(String label) { this.label = label; return this; }
-
-        public Builder authCountLimit(int authCountLimit) { this.authCountLimit = authCountLimit; return this; }
 
         public Builder status (String status) {
             if(!CardStatusConstants.all.contains(status)) {
@@ -77,6 +73,5 @@ public class ProvisionedCard {
         this.endDate = builder.endDate;
         this.status = builder.status;
         this.label = builder.label;
-        this.authCountLimit = builder.authCountLimit;
     }
 }

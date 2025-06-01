@@ -1,7 +1,9 @@
 package com.LukeLabs.PayMeAPI;
 
+import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -10,8 +12,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 		info = @Info(
 				title = "PayMe API",
 				version = "1.0.0",
-				description = "Provides functionality to issue and manage cards, retrieve related transactions, and view associated KYC profiles."
-		)
+				description = "Offers functionality to issue and manage payment cards along with their associated " +
+						"KYC-verified user profiles. Includes capabilities to retrieve card transactions and store, " +
+						"access, and analyze spending data."
+		),
+		tags = {
+				@Tag(name = SwaggerConstants.Tags.HealthCheck, description = "Confirm health status of API"),
+				@Tag(name = SwaggerConstants.Tags.Cards, description = "Create and manage cards"),
+				@Tag(name = SwaggerConstants.Tags.Transactions, description = "Find all file based transaction associated to a card"),
+				@Tag(name = SwaggerConstants.Tags.Spend, description = "Managee spend occurrences")
+		}
 )
 @SpringBootApplication
 @EnableAsync

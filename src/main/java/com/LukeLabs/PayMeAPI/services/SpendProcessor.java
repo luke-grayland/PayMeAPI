@@ -52,7 +52,7 @@ public class SpendProcessor {
         boolean spendCountExceeded = false;
         boolean spendLimitExceeded = false;
 
-        if(SafeBetConstants.SAFE_BET_CATEGORIES.contains(request.getSpendCategory())) {
+        if(SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
             var fromDateTime = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
             List<SpendDocument> recentSpends = spendRepository
                     .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);

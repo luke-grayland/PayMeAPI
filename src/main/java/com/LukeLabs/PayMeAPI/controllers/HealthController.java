@@ -1,13 +1,14 @@
 package com.LukeLabs.PayMeAPI.controllers;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthController {
 
-    @Tag(name = "Health Check", description = "Confirm health status of API")
+    @Operation(summary = "Confirm health status of API", tags = { SwaggerConstants.Tags.HealthCheck })
     @GetMapping("/")
     public String health() {
         return "I'm alive!";

@@ -22,7 +22,6 @@ public class Card {
     private LocalDateTime endDate;
     private String status;
     private String label;
-    private int authCountLimit;
 
     @Override
     public String toString() {
@@ -36,8 +35,7 @@ public class Card {
                 "Start Date: %s " +
                 "End Date: %s " +
                 "Status: %s " +
-                "Label: %s " +
-                "Auth Count Limit: %d",
+                "Label: %s ",
                 ID.toString(),
                 ObfuscatedSensitiveValue(cardNumber),
                 ObfuscatedSensitiveValue(cvv),
@@ -48,8 +46,7 @@ public class Card {
                 startDate,
                 endDate,
                 status,
-                label,
-                authCountLimit
+                label
         );
     }
 
