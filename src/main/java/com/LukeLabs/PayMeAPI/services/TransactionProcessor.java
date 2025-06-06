@@ -2,16 +2,15 @@ package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.constants.TransactionFileDefinition;
 import com.LukeLabs.PayMeAPI.mappers.TransactionMapper;
+import com.LukeLabs.PayMeAPI.models.Transaction;
 import com.LukeLabs.PayMeAPI.models.responses.GetCardTransactionsResponse;
+import org.springdoc.core.converters.OAS31ModelConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
 public class TransactionProcessor {
@@ -42,8 +41,9 @@ public class TransactionProcessor {
         if(matchingTransactions.isEmpty()) return response;
 
         var mappedTransactions = transactionMapper.MapTransactions(matchingTransactions.get());
-        response.setTransactions(mappedTransactions);
+        SortTransactionByDateDesc(mappedTransactions);
 
+        response.setTransactions(mappedTransactions);
         return response;
     }
 
@@ -55,5 +55,19 @@ public class TransactionProcessor {
         if(matchingTransactions.isEmpty()) return Optional.empty();
 
         return Optional.of(matchingTransactions);
+    }
+
+    private static void SortTransactionByDateDesc(List<Transaction> transactions)
+    {
+        Comparator<Transaction> comparator = (Transaction o1, Transaction o2) -> {
+            if(o1.getTransactionsTimestamp().isAfter(o2.getTransactionsTimestamp()))
+                return 1;
+            else if(o1.getTransactionsTimestamp().isEqual(o2.getTransactionsTimestamp()))
+                return 0;
+            else
+                return -1;
+        };
+
+        transactions.sort(comparator);
     }
 }
