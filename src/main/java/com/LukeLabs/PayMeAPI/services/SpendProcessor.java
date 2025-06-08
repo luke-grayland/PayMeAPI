@@ -46,7 +46,7 @@ public class SpendProcessor {
                 request.getDatetime())
                 .build();
 
-        SpendDocument spendDocument = spendMapper.MapSpend(newSpend);
+        SpendDocument spendDocument = spendMapper.toSpendDocument(newSpend);
         spendRepository.save(spendDocument);
 
         boolean spendCountExceeded = false;
