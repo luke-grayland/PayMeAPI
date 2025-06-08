@@ -29,9 +29,8 @@ public class CreateCardProcessor {
 
     public CreateCardResponse createCard(CreateCardRequest request) {
 
-        NewCardNotifier notifier = (int userId, UUID cardId) -> {
-            notificationService.QueueNotification(cardId, "Card created for user " + userId);
-        };
+        NewCardNotifier notifier = (int userId, UUID cardId) ->
+                notificationService.QueueNotification(cardId, "Card created for user " + userId);
 
         logger.info("Creating new card for user: {}", request.getUserID());
         var provisionedCard = new ProvisionedCard.Builder(
@@ -43,7 +42,7 @@ public class CreateCardProcessor {
                 .status(CardStatusConstants.ACTIVE)
                 .build();
 
-        var card = cardMapper.Map(provisionedCard);
+        var card = cardMapper.toCard(provisionedCard);
         cardRepository.save(card);
         logger.info("Card saved: {}", card);
 

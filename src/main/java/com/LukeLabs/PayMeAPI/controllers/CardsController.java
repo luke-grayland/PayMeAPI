@@ -35,16 +35,14 @@ public class CardsController {
     private final UpdateCardProcessor updateCardProcessor;
     private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
 
-    public CardsController(CreateCardProcessor createCardProcessor, 
-        ViewCardProcessor viewCardProcessor, UpdateCardProcessor updateCardProcessor) {
+    public CardsController(CreateCardProcessor createCardProcessor, ViewCardProcessor viewCardProcessor,
+                           UpdateCardProcessor updateCardProcessor) {
         this.createCardProcessor = createCardProcessor;
         this.viewCardProcessor = viewCardProcessor;
         this.updateCardProcessor = updateCardProcessor;
     }
 
-    @Operation(
-            summary = "Return cards by user",
-            description = "Return all cards associated to a specified user",
+    @Operation(summary = "Return cards by user", description = "Return all cards associated to a specified user",
             tags = { SwaggerConstants.Tags.Cards })
     @GetMapping
     public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
@@ -58,9 +56,7 @@ public class CardsController {
             });
     }
 
-    @Operation(
-            summary = "Create a new card",
-            description = "Create a new card for a specified user",
+    @Operation(summary = "Create a new card", description = "Create a new card for a specified user",
             tags = { SwaggerConstants.Tags.Cards })
     @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
@@ -76,9 +72,7 @@ public class CardsController {
         }
     }
 
-    @Operation(
-            summary = "Update card status",
-            description = "Update the status of a single card",
+    @Operation(summary = "Update card status", description = "Update the status of a single card",
             tags = { SwaggerConstants.Tags.Cards })
     @PatchMapping("/{cardID}")
     public CompletableFuture<ResponseEntity<String>> updateCardStatus(
@@ -104,9 +98,7 @@ public class CardsController {
             });
     }
 
-    @Operation(
-            summary = "Get card details",
-            description = "Get card by card ID",
+    @Operation(summary = "Get card details", description = "Get card by card ID",
             tags = { SwaggerConstants.Tags.Cards })
     @GetMapping("/{cardId}")
     public ResponseEntity<Card> getCardDetails(@PathVariable("cardId") UUID cardID) {

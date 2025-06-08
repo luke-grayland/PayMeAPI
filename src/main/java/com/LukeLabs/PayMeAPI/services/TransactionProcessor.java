@@ -4,7 +4,6 @@ import com.LukeLabs.PayMeAPI.constants.TransactionFileDefinition;
 import com.LukeLabs.PayMeAPI.mappers.TransactionMapper;
 import com.LukeLabs.PayMeAPI.models.Transaction;
 import com.LukeLabs.PayMeAPI.models.responses.GetCardTransactionsResponse;
-import org.springdoc.core.converters.OAS31ModelConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ public class TransactionProcessor {
         var response = new GetCardTransactionsResponse();
         response.setCardId(cardId);
 
-        List<String> fileLines = new ArrayList<String>();
+        List<String> fileLines = new ArrayList<>();
         try(Scanner scanner = new Scanner(new File(transactionFilePath))) {
             while(scanner.hasNextLine()) {
                 fileLines.add(scanner.nextLine());
