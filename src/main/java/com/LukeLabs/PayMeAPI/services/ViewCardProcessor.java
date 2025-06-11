@@ -4,7 +4,9 @@ import java.util.Comparator;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.LukeLabs.PayMeAPI.mappers.CardMapper;
 import com.LukeLabs.PayMeAPI.models.Card;
+import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
 import com.LukeLabs.PayMeAPI.models.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,11 @@ import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 public class ViewCardProcessor {
     private final CardRepository cardRepository;
     private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
+    private final CardMapper cardMapper;
 
-    public ViewCardProcessor(CardRepository cardRepository) {
+    public ViewCardProcessor(CardRepository cardRepository, CardMapper cardMapper) {
         this.cardRepository = cardRepository;
+        this.cardMapper = cardMapper;
     }
     
     @Async
@@ -33,17 +37,19 @@ public class ViewCardProcessor {
                 logger.info("{} cards found", cards.size());
 
                 var response = new GetCardsByUserResponse();
-                var cardsByStartDate = cards.stream().sorted(Comparator.comparing(Card::getStartDate)).toList();
+                var cardsByStartDate = cards.stream()
+                        .sorted(Comparator.comparing(Card::getStartDate))
+                        .map(cardMapper::toCardDTO).toList();
                 response.setCards(cardsByStartDate);
                 return response;
             });
     }
 
-    public Result<Card> getCardByCardID(UUID cardID) {
+    public Result<CardDTO> getCardByCardID(UUID cardID) {
         logger.info("Finding card with ID: {}", cardID);
         var card = cardRepository.findById(cardID);
 
-        return card.map(Result::success).orElseGet(() ->
-                Result.failure("Card with ID " + cardID + " not found"));
+        return card.map(value -> Result.success(cardMapper.toCardDTO(value)))
+                .orElseGet(() -> Result.failure("Card with ID " + cardID + " not found"));
     }
 }

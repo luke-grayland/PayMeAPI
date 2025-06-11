@@ -49,7 +49,7 @@ public class CreateCardProcessor {
         notifier.queueNotification(request.getUserID(), card.getID());
 
         var response = new CreateCardResponse();
-        response.setCard(card);
+        response.setCard(cardMapper.toCardDTO(card));
 
         return response;
     }

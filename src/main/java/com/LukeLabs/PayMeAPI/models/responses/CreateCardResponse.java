@@ -1,6 +1,6 @@
 package com.LukeLabs.PayMeAPI.models.responses;
 
-import com.LukeLabs.PayMeAPI.models.Card;
+import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class CreateCardResponse {
     @JsonProperty("card")
-    private Card card;
+    private CardDTO card;
 }

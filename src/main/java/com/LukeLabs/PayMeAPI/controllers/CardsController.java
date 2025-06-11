@@ -4,7 +4,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
-import com.LukeLabs.PayMeAPI.models.Card;
+import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class CardsController {
     @Operation(summary = "Get card details", description = "Get card by card ID",
             tags = { SwaggerConstants.Tags.Cards })
     @GetMapping("/{cardId}")
-    public ResponseEntity<Card> getCardDetails(@PathVariable("cardId") UUID cardID) {
+    public ResponseEntity<CardDTO> getCardDetails(@PathVariable("cardId") UUID cardID) {
         try {
             var result = viewCardProcessor.getCardByCardID(cardID);
 
