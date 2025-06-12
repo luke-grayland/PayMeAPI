@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.services;
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.functionalInterfaces.NewCardNotifier;
 import com.LukeLabs.PayMeAPI.mappers.CardMapper;
+import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.ProvisionedCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class CreateCardProcessor {
                 .status(CardStatusConstants.ACTIVE)
                 .build();
 
-        var card = cardMapper.toCard(provisionedCard);
+        Card card = cardMapper.toCard(provisionedCard);
         cardRepository.save(card);
         logger.info("Card saved: {}", card);
 
