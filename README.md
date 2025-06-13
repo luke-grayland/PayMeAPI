@@ -1,10 +1,10 @@
 # PayMe API (Spring Boot & MongoDB)
 
-This project is part of my effort to familiarise myself with modern Java practices by getting hands on with Spring Boot. I'm mapping concepts I already know from C#—like DI, async programming, and clean architecture—to their Java equivalents.
+This Java/Spring Boot REST API offers functionality to issue and manage payment cards along with their associated KYC-verified user profiles. Includes capabilities to: create, view, and update cards; retrieve card transactions; store, access, and analyze spending data; trigger automatic card blocking using SafeBet mechanism.
 
 **Live Demo/Swagger Documentation (Hosted on AWS using Elastic Beanstalk):**
 
-http://paymeapi.eu-north-1.elasticbeanstalk.com/swagger
+https://www.paymeapi.online/swagger
 
 ---
 
@@ -34,17 +34,25 @@ http://paymeapi.eu-north-1.elasticbeanstalk.com/swagger
     
     Explored Java generics in to enforce Result<T> pattern.
 
+- **Cloud Deployment (Expanding Azure knowledge to AWS):**
+
+  Package and deploy the application using AWS Elastic Beanstalk (hosting), AWS Secrets Manager (config secrets), and AWS Cloud Watch (logging).
+
+- **Streams API:**
+
+  Utilise Java Streams API for data filtering, mapping, and transformation.
+
+- **Lambda Expressions:**
+  
+  Functional programming style lambda expressions with `Function`, `Predicate`, and other functional interfaces.
+
 ---
 
-## 🛠️ Planned Features
+## 🛠️ Up Next:
 
 - **Mutual TLS (mTLS):**
     
     Load and attach X.509 certificates to outbound HTTP requests using Java's `SSLContext` and `HttpClient`.
-    
-- **LINQ Equivalent:**
-    
-    Utilise Java Streams API for data filtering, mapping, and transformation.
     
 - **Caching:**
     
@@ -54,15 +62,4 @@ http://paymeapi.eu-north-1.elasticbeanstalk.com/swagger
     
     Write unit tests using `JUnit 5` (Jupiter) for core testing & `Mockito` for mocking dependencies.
 
-- **Cloud Deployment (Expanding Azure knowledge to AWS):**
-    
-    Package and deploy the application using AWS Elastic Beanstalk (hosting), AWS Secrets Manager (config secrets), and AWS Cloud Watch (logging).
-
----
-
-## Topics Still To Explore
-
-Next up will be:
-
-- Functional programming with `Function`, `Predicate`, and other functional interfaces.
 
