@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI;
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +22,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 				@Tag(name = SwaggerConstants.Tags.Cards, description = "Create and manage cards"),
 				@Tag(name = SwaggerConstants.Tags.Transactions, description = "Find all file based transaction associated to a card"),
 				@Tag(name = SwaggerConstants.Tags.Spend, description = "Managee spend occurrences")
-		}
+		},
+		servers = {@Server(url = "/", description = "Default Server URL")}
 )
 @SpringBootApplication
 @EnableAsync
