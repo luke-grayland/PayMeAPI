@@ -26,7 +26,7 @@ public class TransactionMapper {
             transaction.setTransactionId(line.substring(TransactionFileDefinition.TransactionId_Start, TransactionFileDefinition.TransactionId_End));
 
             var transactionTypeRaw = line.substring(TransactionFileDefinition.TransactionType_Start, TransactionFileDefinition.TransactionType_End)
-                    .replace(" ", "");;
+                    .replace(" ", "");
             String transactionType = "";
 
             try {

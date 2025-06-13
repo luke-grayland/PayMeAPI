@@ -3,6 +3,7 @@ package com.LukeLabs.PayMeAPI.services;
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.functionalInterfaces.NewCardNotifier;
 import com.LukeLabs.PayMeAPI.mappers.CardMapper;
+import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.ProvisionedCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,8 @@ public class CreateCardProcessor {
 
     public CreateCardResponse createCard(CreateCardRequest request) {
 
-        NewCardNotifier notifier = (int userId, UUID cardId) -> {
-            notificationService.QueueNotification(cardId, "Card created for user " + userId);
-        };
+        NewCardNotifier notifier = (int userId, UUID cardId) ->
+                notificationService.QueueNotification(cardId, "Card created for user " + userId);
 
         logger.info("Creating new card for user: {}", request.getUserID());
         var provisionedCard = new ProvisionedCard.Builder(
@@ -43,14 +43,14 @@ public class CreateCardProcessor {
                 .status(CardStatusConstants.ACTIVE)
                 .build();
 
-        var card = cardMapper.Map(provisionedCard);
+        Card card = cardMapper.toCard(provisionedCard);
         cardRepository.save(card);
         logger.info("Card saved: {}", card);
 
         notifier.queueNotification(request.getUserID(), card.getID());
 
         var response = new CreateCardResponse();
-        response.setCard(card);
+        response.setCard(cardMapper.toCardDTO(card));
 
         return response;
     }
