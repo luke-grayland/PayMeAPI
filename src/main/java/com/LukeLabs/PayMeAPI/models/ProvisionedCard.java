@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
 import com.LukeLabs.PayMeAPI.services.CardNumberGenerator;
+import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.InvalidCardStatusException;
 import lombok.Data;
 
 @Data
@@ -50,7 +51,7 @@ public class ProvisionedCard {
 
         public Builder status (String status) {
             if(!CardStatusConstants.all.contains(status)) {
-                throw new IllegalArgumentException("Invalid card status: " + status);
+                throw new InvalidCardStatusException("Invalid card status: " + status);
             }
             this.status = status;
             return this;

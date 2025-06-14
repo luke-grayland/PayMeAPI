@@ -5,10 +5,9 @@ import java.util.concurrent.CompletableFuture;
 
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
+import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.BadRequestException;
+import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.CardNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,7 +32,6 @@ public class CardsController {
     private final CreateCardProcessor createCardProcessor;
     private final ViewCardProcessor viewCardProcessor;
     private final UpdateCardProcessor updateCardProcessor;
-    private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
 
     public CardsController(CreateCardProcessor createCardProcessor, ViewCardProcessor viewCardProcessor,
                            UpdateCardProcessor updateCardProcessor) {
@@ -42,77 +40,53 @@ public class CardsController {
         this.updateCardProcessor = updateCardProcessor;
     }
 
+    @GetMapping
     @Operation(summary = "Return cards by user", description = "Return all cards associated to a specified user",
             tags = { SwaggerConstants.Tags.Cards })
-    @GetMapping
     public CompletableFuture<ResponseEntity<GetCardsByUserResponse>> getCardsByUser(@RequestParam("userID") int userID) {
         return viewCardProcessor.getCardsByUserID(userID)
-            .thenApply(ResponseEntity::ok)
-            .exceptionally(ex -> {
-                logger.error("Error getting cards by user ID", ex);
-                return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-            });
+            .thenApply(ResponseEntity::ok);
     }
 
+    @PostMapping
     @Operation(summary = "Create a new card", description = "Create a new card for a specified user",
             tags = { SwaggerConstants.Tags.Cards })
-    @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
-        try {
-             var response = createCardProcessor.createCard(createCardRequest);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+        var result = createCardProcessor.createCard(createCardRequest);
+
+        if(!result.isSuccess()) {
+            throw new BadRequestException(result.getErrorMessage());
         }
+
+        return ResponseEntity.ok(result.getData());
     }
 
+    @PatchMapping("/{cardID}")
     @Operation(summary = "Update card status", description = "Update the status of a single card",
             tags = { SwaggerConstants.Tags.Cards })
-    @PatchMapping("/{cardID}")
-    public CompletableFuture<ResponseEntity<String>> updateCardStatus(
-            @PathVariable("cardID") UUID cardID, 
+    public CompletableFuture<ResponseEntity<String>> updateCardStatus(@PathVariable("cardID") UUID cardID,
             @RequestBody CardStatusUpdateRequest request) {
 
         return updateCardProcessor.updateCardStatus(cardID, request)
             .thenApply(result -> {
-                if (result.isSuccess()) {
-                    var message = String.format("Successfully updated the card with ID %s", cardID);
-                    logger.info(message);
-                    return ResponseEntity.ok().body(message);
+                if(!result.isSuccess()) {
+                    throw new BadRequestException(result.getErrorMessage());
                 }
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(result.getErrorMessage());
-            })
-            .exceptionally(ex -> {
-                var errorMessage = "Error updating card status for cardID: " + cardID;
-                logger.error(errorMessage, ex);
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(errorMessage);
+
+                return ResponseEntity.ok().body(String.format("Successfully updated the card with ID %s", cardID));
             });
     }
 
+    @GetMapping("/{cardId}")
     @Operation(summary = "Get card details", description = "Get card by card ID",
             tags = { SwaggerConstants.Tags.Cards })
-    @GetMapping("/{cardId}")
     public ResponseEntity<CardDTO> getCardDetails(@PathVariable("cardId") UUID cardID) {
-        try {
-            var result = viewCardProcessor.getCardByCardID(cardID);
+        var result = viewCardProcessor.getCardByCardID(cardID);
 
-            if(!result.isSuccess()) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-            return ResponseEntity.ok(result.getData());
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if(!result.isSuccess()) {
+            throw new CardNotFoundException(result.getErrorMessage());
         }
+
+        return ResponseEntity.ok(result.getData());
     }
 }

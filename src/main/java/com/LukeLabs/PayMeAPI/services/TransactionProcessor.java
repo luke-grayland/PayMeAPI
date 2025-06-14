@@ -2,6 +2,7 @@ package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.constants.TransactionFileDefinition;
 import com.LukeLabs.PayMeAPI.mappers.TransactionMapper;
+import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.Transaction;
 import com.LukeLabs.PayMeAPI.models.responses.GetCardTransactionsResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ public class TransactionProcessor {
         this.transactionMapper = transactionMapper;
     }
 
-    public GetCardTransactionsResponse getCardTransactions(String cardId) {
+    public Result<GetCardTransactionsResponse> getCardTransactions(String cardId) {
         var response = new GetCardTransactionsResponse();
         response.setCardId(cardId);
 
@@ -34,16 +35,16 @@ public class TransactionProcessor {
             throw new RuntimeException(String.format("Error reading transaction file: %s", e.getMessage()));
         }
 
-        if(fileLines.isEmpty()) return response;
+        if(fileLines.isEmpty()) return Result.success(response);
 
         Optional<List<String>> matchingTransactions = GetMatchingTransactions(fileLines, cardId);
-        if(matchingTransactions.isEmpty()) return response;
+        if(matchingTransactions.isEmpty()) return Result.success(response);
 
         var mappedTransactions = transactionMapper.MapTransactions(matchingTransactions.get());
         SortTransactionByDateDesc(mappedTransactions);
 
         response.setTransactions(mappedTransactions);
-        return response;
+        return Result.success(response);
     }
 
     private Optional<List<String>> GetMatchingTransactions(List<String> fileLines, String cardId) {

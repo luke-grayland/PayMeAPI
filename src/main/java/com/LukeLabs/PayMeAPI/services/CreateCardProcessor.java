@@ -5,6 +5,7 @@ import com.LukeLabs.PayMeAPI.functionalInterfaces.NewCardNotifier;
 import com.LukeLabs.PayMeAPI.mappers.CardMapper;
 import com.LukeLabs.PayMeAPI.models.Card;
 import com.LukeLabs.PayMeAPI.models.ProvisionedCard;
+import com.LukeLabs.PayMeAPI.models.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,7 @@ public class CreateCardProcessor {
         this.notificationService = notificationService;
     }
 
-    public CreateCardResponse createCard(CreateCardRequest request) {
-
+    public Result<CreateCardResponse> createCard(CreateCardRequest request) {
         NewCardNotifier notifier = (int userId, UUID cardId) ->
                 notificationService.QueueNotification(cardId, "Card created for user " + userId);
 
@@ -52,6 +52,6 @@ public class CreateCardProcessor {
         var response = new CreateCardResponse();
         response.setCard(cardMapper.toCardDTO(card));
 
-        return response;
+        return Result.success(response);
     }
 }

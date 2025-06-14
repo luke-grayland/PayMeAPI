@@ -46,6 +46,11 @@ https://www.paymeapi.online/swagger
   
   Functional programming style lambda expressions with `Function`, `Predicate`, and other functional interfaces.
 
+- **Other:**
+
+  - Global exception handling using @RestControllerAdvice
+  - Inbound request logging using OncePerRequestFilter (AbstractRequestLoggingFilter extends OncePerRequestFilter)
+
 ---
 
 ## 🛠️ Up Next:

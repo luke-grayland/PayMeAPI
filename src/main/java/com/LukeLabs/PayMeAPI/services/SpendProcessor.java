@@ -23,6 +23,7 @@ public class SpendProcessor {
     private final SpendNotificationService spendNotificationService;
     private final CardStatusUpdateService cardStatusUpdateService;
     private final BlockedCardCheckService blockedCardCheckService;
+    private final static int twentyFourHoursInMilliSeconds = 24 * 60 * 60 * 1000;
 
     public SpendProcessor(SpendRepository spendRepository, SpendMapper spendMapper,
                           SpendNotificationService spendNotificationService,
@@ -53,7 +54,7 @@ public class SpendProcessor {
         boolean spendLimitExceeded = false;
 
         if(SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
-            var fromDateTime = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+            var fromDateTime = new Date(System.currentTimeMillis() - twentyFourHoursInMilliSeconds);
             List<SpendDocument> recentSpends = spendRepository
                     .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
 
