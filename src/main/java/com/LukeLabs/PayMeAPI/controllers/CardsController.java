@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
+import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.CardNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,17 +89,11 @@ public class CardsController {
             tags = { SwaggerConstants.Tags.Cards })
     @GetMapping("/{cardId}")
     public ResponseEntity<CardDTO> getCardDetails(@PathVariable("cardId") UUID cardID) {
-        try {
-            var result = viewCardProcessor.getCardByCardID(cardID);
-
-            if(!result.isSuccess()) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-            return ResponseEntity.ok(result.getData());
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        var result = viewCardProcessor.getCardByCardID(cardID);
+        if(!result.isSuccess()) {
+            throw new CardNotFoundException(result.getErrorMessage());
         }
+
+        return ResponseEntity.ok(result.getData());
     }
 }

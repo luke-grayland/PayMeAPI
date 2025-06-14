@@ -13,14 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.LukeLabs.PayMeAPI.controllers.CardsController;
 import com.LukeLabs.PayMeAPI.models.responses.GetCardsByUserResponse;
 import com.LukeLabs.PayMeAPI.repositories.CardRepository;
 
 @Service
 public class ViewCardProcessor {
     private final CardRepository cardRepository;
-    private static final Logger logger = LoggerFactory.getLogger(CardsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ViewCardProcessor.class);
     private final CardMapper cardMapper;
 
     public ViewCardProcessor(CardRepository cardRepository, CardMapper cardMapper) {

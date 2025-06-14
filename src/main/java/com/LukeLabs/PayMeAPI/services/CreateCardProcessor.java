@@ -29,7 +29,6 @@ public class CreateCardProcessor {
     }
 
     public CreateCardResponse createCard(CreateCardRequest request) {
-
         NewCardNotifier notifier = (int userId, UUID cardId) ->
                 notificationService.QueueNotification(cardId, "Card created for user " + userId);
 
