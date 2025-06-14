@@ -50,9 +50,7 @@ public class CardsController {
             .thenApply(ResponseEntity::ok)
             .exceptionally(ex -> {
                 logger.error("Error getting cards by user ID", ex);
-                return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             });
     }
 
@@ -60,25 +58,15 @@ public class CardsController {
             tags = { SwaggerConstants.Tags.Cards })
     @PostMapping
     public ResponseEntity<CreateCardResponse> createCard(@RequestBody CreateCardRequest createCardRequest) {
-        try {
-             var response = createCardProcessor.createCard(createCardRequest);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
-        }
+        var response = createCardProcessor.createCard(createCardRequest);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update card status", description = "Update the status of a single card",
             tags = { SwaggerConstants.Tags.Cards })
     @PatchMapping("/{cardID}")
-    public CompletableFuture<ResponseEntity<String>> updateCardStatus(
-            @PathVariable("cardID") UUID cardID, 
+    public CompletableFuture<ResponseEntity<String>> updateCardStatus(@PathVariable("cardID") UUID cardID,
             @RequestBody CardStatusUpdateRequest request) {
-
         return updateCardProcessor.updateCardStatus(cardID, request)
             .thenApply(result -> {
                 if (result.isSuccess()) {
@@ -86,15 +74,13 @@ public class CardsController {
                     logger.info(message);
                     return ResponseEntity.ok().body(message);
                 }
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(result.getErrorMessage());
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getErrorMessage());
             })
             .exceptionally(ex -> {
                 var errorMessage = "Error updating card status for cardID: " + cardID;
                 logger.error(errorMessage, ex);
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(errorMessage);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
             });
     }
 

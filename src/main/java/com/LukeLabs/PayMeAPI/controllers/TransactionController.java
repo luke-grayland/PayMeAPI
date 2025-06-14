@@ -26,12 +26,10 @@ public class TransactionController {
     public ResponseEntity<GetCardTransactionsResponse> getTransactions(@PathVariable String cardId) {
         try {
             var result = transactionProcessor.getCardTransactions(cardId);
-
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } catch (Exception ex) {
             logger.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }
