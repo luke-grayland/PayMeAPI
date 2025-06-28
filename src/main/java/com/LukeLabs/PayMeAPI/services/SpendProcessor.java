@@ -2,6 +2,7 @@ package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.constants.SafeBetConstants;
+import com.LukeLabs.PayMeAPI.handlers.*;
 import com.LukeLabs.PayMeAPI.mappers.SpendMapper;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.Spend;
@@ -55,10 +56,6 @@ public class SpendProcessor {
             return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
         }
 
-        boolean spendCountExceeded = false;
-        boolean spendLimitExceeded = false;
-        boolean salaryFractionExceeded = false;
-
         var fromDateTime = new Date(System.currentTimeMillis() - twentyFourHoursInMilliSeconds);
         List<SpendDocument> recentSpends = spendRepository
                 .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
@@ -68,29 +65,16 @@ public class SpendProcessor {
             return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
         }
 
-        if(recentSpends.size() >= SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT) {
-            logger.info("Recent spend count exceeds limit - SafeBet block required");
-            spendCountExceeded = true;
-        }
+        //TODO: add configuration to allow for dependency injection
+        var spendCountHandler = new SpendCountHandler();
+        var spendLimitHandler = new SpendLimitHandler();
+        var salaryFractionHandler = new SalaryFractionHandler();
 
-        double spendTotal = 0;
-        if(!spendCountExceeded) {
-            for (var spend : recentSpends) { spendTotal += spend.getAmount(); }
+        spendCountHandler.setNext(spendLimitHandler);
+        spendLimitHandler.setNext(salaryFractionHandler);
+        SafeBetResult safeBetResult = spendCountHandler.blockIsRequired(recentSpends);
 
-            if(spendTotal > SafeBetConstants.PER_DAY_TOTAL_SPEND_LIMIT) {
-                logger.info("Recent spend total amount exceeds limit - SafeBet block required");
-                spendLimitExceeded = true;
-            }
-        }
-
-        //-------- add salary portion logic using mediator pattern
-        // find average salary from last 3 months
-        // take spendTotal -> if spendTotal exceeds 1/4 of your monthly salary, trigger SafeBet block
-        // use SafeBetConstants.SALARY_FRACTION const
-
-        //--------
-
-        if(spendCountExceeded || spendLimitExceeded || salaryFractionExceeded) {
+        if(safeBetResult.blockIsRequired()) {
             Result<String> cardUpdateResult;
             try {
                 cardUpdateResult = cardStatusUpdateService
@@ -104,7 +88,7 @@ public class SpendProcessor {
                 return Result.failure(cardUpdateResult.getErrorMessage());
             }
 
-            String safeBetMessage = compileResponseMessage(request, spendCountExceeded, spendLimitExceeded, salaryFractionExceeded);
+            String safeBetMessage = compileResponseMessage(request, safeBetResult.handler());
             return Result.success(safeBetMessage);
         }
 
@@ -112,21 +96,22 @@ public class SpendProcessor {
         return Result.success(String.format("Spend against card %s successfully stored (SafeBet verified)", request.getCardId()));
     }
 
-    private static String compileResponseMessage(LogSpendRequest request, boolean spendCountExceeded,
-                                                 boolean spendLimitExceeded, boolean salaryFractionExceeded) {
+    private static String compileResponseMessage(LogSpendRequest request, SafeBetHandler handler) {
         StringBuilder message = new StringBuilder();
         message.append("Spend successfully stored. ");
 
-        if (spendCountExceeded) {
+        var handlerClass = handler.getClass();
+
+        if (handlerClass.equals(SpendCountHandler.class)) {
             message.append(String.format("Daily Spend Count (%s) hit. ", SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT));
         }
 
-        if (spendLimitExceeded) {
+        if (handlerClass.equals(SpendLimitHandler.class)) {
             message.append(String.format("Daily Total Spend Limit (%s) exceeded. ", SafeBetConstants.PER_DAY_TOTAL_SPEND_LIMIT));
         }
 
-        if(salaryFractionExceeded) {
-            message.append(String.format("Daily Spend exceeds Salary Fraction (%s). ", SafeBetConstants.SALARY_FRACTION));
+        if(handlerClass.equals(SalaryFractionHandler.class)) {
+            message.append(String.format("Spend Amount exceeds Salary Fraction (%s). ", SafeBetConstants.SALARY_FRACTION));
         }
 
         message.append(String.format("SafeBet mode triggered for card %s. " +
