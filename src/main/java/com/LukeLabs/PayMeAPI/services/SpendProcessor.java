@@ -2,6 +2,7 @@ package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.constants.SafeBetConstants;
+import com.LukeLabs.PayMeAPI.handlers.*;
 import com.LukeLabs.PayMeAPI.mappers.SpendMapper;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.Spend;
@@ -50,67 +51,67 @@ public class SpendProcessor {
         SpendDocument spendDocument = spendMapper.toSpendDocument(newSpend);
         spendRepository.save(spendDocument);
 
-        boolean spendCountExceeded = false;
-        boolean spendLimitExceeded = false;
-
-        if(SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
-            var fromDateTime = new Date(System.currentTimeMillis() - twentyFourHoursInMilliSeconds);
-            List<SpendDocument> recentSpends = spendRepository
-                    .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
-
-            if(recentSpends.isEmpty()) {
-                logger.info("No recent spend data found - SafeBet block not required");
-                return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
-            }
-
-            if(recentSpends.size() >= SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT) {
-                logger.info("Recent spend count exceeds limit - SafeBet block required");
-                spendCountExceeded = true;
-            }
-
-            if(!spendCountExceeded) {
-                double spendTotal = 0;
-                for (var spend : recentSpends) { spendTotal += spend.getAmount(); }
-
-                if(spendTotal > SafeBetConstants.PER_DAY_TOTAL_SPEND_LIMIT) {
-                    logger.info("Recent spend total amount exceeds limit - SafeBet block required");
-                    spendLimitExceeded = true;
-                }
-            }
-
-            if(spendCountExceeded || spendLimitExceeded) {
-                Result<String> cardUpdateResult;
-                try {
-                    cardUpdateResult = cardStatusUpdateService
-                            .UpdateStaus(request.getCardId(), CardStatusConstants.BLOCKED).get();
-                } catch(Exception ex) {
-                    logger.error(ex.getMessage());
-                    return Result.failure(ex.getMessage());
-                }
-
-                if(!cardUpdateResult.isSuccess()) {
-                    return Result.failure(cardUpdateResult.getErrorMessage());
-                }
-
-                String safeBetMessage = compileResponseMessage(request, spendCountExceeded, spendLimitExceeded);
-                return Result.success(safeBetMessage);
-            }
+        if(!SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
+            spendNotificationService.QueueNotification(request.getCardId(), "Spend successfully stored");
+            return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
         }
 
-        spendNotificationService.QueueNotification(request.getCardId(), "Spend successfully stored");
-        return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
+        var fromDateTime = new Date(System.currentTimeMillis() - twentyFourHoursInMilliSeconds);
+        List<SpendDocument> recentSpends = spendRepository
+                .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
+
+        if(recentSpends.isEmpty()) {
+            logger.info("No recent spend data found - SafeBet block not required");
+            return Result.success(String.format("Spend against card %s successfully stored", request.getCardId()));
+        }
+
+        //TODO: add configuration to allow for dependency injection
+        var spendCountHandler = new SpendCountHandler();
+        var spendLimitHandler = new SpendLimitHandler();
+        var salaryFractionHandler = new SalaryFractionHandler();
+
+        spendCountHandler.setNext(spendLimitHandler);
+        spendLimitHandler.setNext(salaryFractionHandler);
+        SafeBetResult safeBetResult = spendCountHandler.blockIsRequired(recentSpends);
+
+        if(safeBetResult.blockIsRequired()) {
+            Result<String> cardUpdateResult;
+            try {
+                cardUpdateResult = cardStatusUpdateService
+                        .UpdateStaus(request.getCardId(), CardStatusConstants.BLOCKED).get();
+            } catch(Exception ex) {
+                logger.error(ex.getMessage());
+                return Result.failure(ex.getMessage());
+            }
+
+            if(!cardUpdateResult.isSuccess()) {
+                return Result.failure(cardUpdateResult.getErrorMessage());
+            }
+
+            String safeBetMessage = compileResponseMessage(request, safeBetResult.handler());
+            return Result.success(safeBetMessage);
+        }
+
+        spendNotificationService.QueueNotification(request.getCardId(), "Spend successfully stored (SafeBet verified)");
+        return Result.success(String.format("Spend against card %s successfully stored (SafeBet verified)", request.getCardId()));
     }
 
-    private static String compileResponseMessage(LogSpendRequest request, boolean spendCountExceeded, boolean spendLimitExceeded) {
+    private static String compileResponseMessage(LogSpendRequest request, SafeBetHandler handler) {
         StringBuilder message = new StringBuilder();
         message.append("Spend successfully stored. ");
 
-        if (spendCountExceeded) {
+        var handlerClass = handler.getClass();
+
+        if (handlerClass.equals(SpendCountHandler.class)) {
             message.append(String.format("Daily Spend Count (%s) hit. ", SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT));
         }
 
-        if (spendLimitExceeded) {
+        if (handlerClass.equals(SpendLimitHandler.class)) {
             message.append(String.format("Daily Total Spend Limit (%s) exceeded. ", SafeBetConstants.PER_DAY_TOTAL_SPEND_LIMIT));
+        }
+
+        if(handlerClass.equals(SalaryFractionHandler.class)) {
+            message.append(String.format("Spend Amount exceeds Salary Fraction (%s). ", SafeBetConstants.SALARY_FRACTION));
         }
 
         message.append(String.format("SafeBet mode triggered for card %s. " +

@@ -1,7 +1,7 @@
 package com.LukeLabs.PayMeAPI.mappers;
 
 import com.LukeLabs.PayMeAPI.constants.TransactionFileDefinition;
-import com.LukeLabs.PayMeAPI.enums.TransactionTypes;
+import com.LukeLabs.PayMeAPI.enums.TransactionType;
 import com.LukeLabs.PayMeAPI.models.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionMapper {
@@ -27,11 +29,18 @@ public class TransactionMapper {
 
             var transactionTypeRaw = line.substring(TransactionFileDefinition.TransactionType_Start, TransactionFileDefinition.TransactionType_End)
                     .replace(" ", "");
-            String transactionType = "";
+            String transactionType;
 
             try {
-                var transactionTypeIndex = Integer.parseInt(transactionTypeRaw);
-                transactionType = TransactionTypes.Values.get(transactionTypeIndex);
+                int transactionTypeIndex = Integer.parseInt(transactionTypeRaw);
+
+                Optional<TransactionType> matchingTransactionType = Arrays.stream(TransactionType.values())
+                        .filter(x -> x.code == transactionTypeIndex).findFirst();
+
+                transactionType = matchingTransactionType.isPresent()
+                        ? matchingTransactionType.get().toString()
+                        : String.valueOf(TransactionType.UNKNOWN.code);
+
             } catch(Exception ex) {
                 transactionType = "Unknown";
             }

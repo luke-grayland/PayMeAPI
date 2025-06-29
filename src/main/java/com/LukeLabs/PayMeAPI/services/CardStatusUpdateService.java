@@ -23,23 +23,25 @@ public class CardStatusUpdateService {
         this.notificationService = notificationService;
     }
 
-    public CompletableFuture<Result<String>> UpdateStaus(UUID cardID, String staus) {
+    public CompletableFuture<Result<String>> UpdateStaus(UUID cardID, String status) {
 
-        UpdateCardStatusNotifier notifier = (UUID cardRef, String status) -> {
-            notificationService.QueueNotification(cardRef, "Updated to " + status);
+        UpdateCardStatusNotifier notifier = (UUID cardRef, String cardStatus) -> {
+            notificationService.QueueNotification(cardRef, "Updated to " + cardStatus);
         };
 
-        Optional<Card> card = cardRepository.findById(cardID);
-        if(card.isEmpty()) {
-            return CompletableFuture.completedFuture(Result.failure("Card not found"));
-        }
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<Card> card = cardRepository.findById(cardID);
+            return card;
+        }).thenApply( card -> {
+            if(card.isEmpty()) {
+                return Result.failure("Card not found");
+            }
 
-        card.get().setStatus(staus);
-        cardRepository.save(card.get());
-        logger.info("Card updated successfully");
+            card.get().setStatus(status);
+            logger.info("Card updated successfully");
+            notifier.queueNotification(cardID, status);
 
-        notifier.queueNotification(cardID, staus);
-
-        return CompletableFuture.completedFuture(Result.success("Card status successfully updated"));
+            return Result.success("Card status successfully updated");
+        });
     }
 }
