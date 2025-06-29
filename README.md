@@ -2,13 +2,15 @@
 
 This Java/Spring Boot REST API offers functionality to issue and manage payment cards along with their associated KYC-verified user profiles. Includes capabilities to: create, view, and update cards; retrieve card transactions; store, access, and analyze spending data; trigger automatic card blocking using SafeBet mechanism.
 
+SafeBet evaluates spend data from the past 24 hours to decide if a card should be temporarily blocked, based on total spend, frequency, and individual transaction size relative to average monthly income.
+
 **Live Demo/Swagger Documentation (Hosted on AWS using Elastic Beanstalk):**
 
 https://www.paymeapi.online/swagger
 
 ---
 
-## ✅ Implemented Functionality
+## ✅ Implemented Functionality:
 
 - **RESTful API Endpoints:**
     
@@ -52,7 +54,16 @@ https://www.paymeapi.online/swagger
   - Inbound request logging using OncePerRequestFilter (AbstractRequestLoggingFilter extends OncePerRequestFilter)
 
 ---
+## 💡 Design Patterns Used:
+   
+  - Builder (see ProvisionedCard.java)
+  - Composition & Forwarding (see SpendNotificationService.java)
+  - Result (see Result.java) 
+  - Chain of Responsibility (see SpendProcessor.java)
+  - Strategy Enum (see TransactionType.java)
+  - Singleton (see CardNumberGenerator.java)
 
+---
 ## 🛠️ Up Next:
 
 - **Mutual TLS (mTLS):**
