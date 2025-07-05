@@ -48,6 +48,10 @@ https://www.paymeapi.online/swagger
   
   Functional programming style lambda expressions with `Function`, `Predicate`, and other functional interfaces.
 
+- **Unit Testing:**
+
+  Unit tests using `JUnit 5` (Jupiter) for testing & `Mockito` for mocking dependencies.
+
 - **Other:**
 
   - Global exception handling using @RestControllerAdvice
@@ -73,9 +77,5 @@ https://www.paymeapi.online/swagger
 - **Caching:**
     
     Integrate in-memory caching using `Caffeine` or `Spring Cache` abstraction.
-    
-- **Unit Testing:**
-    
-    Write unit tests using `JUnit 5` (Jupiter) for core testing & `Mockito` for mocking dependencies.
 
 
