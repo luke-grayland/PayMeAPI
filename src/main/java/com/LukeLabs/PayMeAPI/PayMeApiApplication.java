@@ -15,7 +15,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 				version = "1.0.0",
 				description = "Offers functionality to issue and manage payment cards along with their associated " +
 						"KYC-verified user profiles. Includes capabilities to retrieve card transactions and store, " +
-						"access, and analyze spending data."
+						"access, and analyze spending data. SafeBet mechanism evaluates spend data from the past 24 " +
+						"hours to decide if a card should be temporarily blocked, based on total spend, frequency, " +
+						"and individual transaction size relative to average monthly income."
 		),
 		tags = {
 				@Tag(name = SwaggerConstants.Tags.HealthCheck, description = "Confirm health status of API"),

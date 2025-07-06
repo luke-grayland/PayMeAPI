@@ -20,7 +20,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{cardId}")
-    @Operation(summary = "Find transactions", description = "Find all file based transaction associated to a card",
+    @Operation(summary = "Find transactions", description = "Find all file based transaction associated to a card (e.g. aeba970d-151a-4a17-b3bd-c2a499cb563d).",
             tags = { SwaggerConstants.Tags.Transactions })
     public ResponseEntity<GetCardTransactionsResponse> getTransactions(@PathVariable String cardId) {
         Result<GetCardTransactionsResponse> result = transactionProcessor.getCardTransactions(cardId);

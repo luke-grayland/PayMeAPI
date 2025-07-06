@@ -38,6 +38,7 @@ public class CardStatusUpdateService {
             }
 
             card.get().setStatus(status);
+            cardRepository.save(card.get());
             logger.info("Card updated successfully");
             notifier.queueNotification(cardID, status);
 
