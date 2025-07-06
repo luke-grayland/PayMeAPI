@@ -12,7 +12,7 @@ import com.LukeLabs.PayMeAPI.constants.KYCStatus;
 import com.LukeLabs.PayMeAPI.models.Result;
 
 @Service
-public class KYCService {
+class KYCService {
     private static final List<Integer> blockedKYCUsers = List.of(123, 456, 789);
     private final LimitedCache<Integer, Integer> nonBlockedUsersCache;
     private static final Logger logger = LoggerFactory.getLogger(KYCService.class);
