@@ -2,11 +2,10 @@ package com.LukeLabs.PayMeAPI.services;
 
 import com.LukeLabs.PayMeAPI.constants.KYCStatus;
 import com.LukeLabs.PayMeAPI.models.Result;
+import com.LukeLabs.PayMeAPI.utilities.cache.LimitedCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +22,7 @@ public class KYCServiceTest {
     public void getKYCStatus_userPreviouslyChecked_returnsSuccess() {
         //Assemble
         int userId = 123;
-        ConcurrentHashMap<Integer, Integer> previouslyCheckedUsers = new ConcurrentHashMap<>();
+        LimitedCache<Integer, Integer> previouslyCheckedUsers = new LimitedCache<>(1000);
         previouslyCheckedUsers.put(userId, KYCStatus.APPROVED);
         _sut = new KYCService(previouslyCheckedUsers);
 

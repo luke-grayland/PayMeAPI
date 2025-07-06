@@ -1,8 +1,8 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
+import com.LukeLabs.PayMeAPI.utilities.cache.LimitedCache;
 import lombok.experimental.PackagePrivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,21 +14,21 @@ import com.LukeLabs.PayMeAPI.models.Result;
 @Service
 public class KYCService {
     private static final List<Integer> blockedKYCUsers = List.of(123, 456, 789);
-    private final ConcurrentHashMap<Integer, Integer> previouslyCheckedUsers;
+    private final LimitedCache<Integer, Integer> nonBlockedUsersCache;
     private static final Logger logger = LoggerFactory.getLogger(KYCService.class);
 
     KYCService() {
-        previouslyCheckedUsers = new ConcurrentHashMap<>();
+        nonBlockedUsersCache = new LimitedCache<>(1000);
     }
 
     @PackagePrivate
-    KYCService(ConcurrentHashMap<Integer, Integer> customTestCache) {
-        this.previouslyCheckedUsers = customTestCache;
+    KYCService(LimitedCache<Integer, Integer> customTestCache) {
+        this.nonBlockedUsersCache = customTestCache;
     }
 
     public Result<Integer> GetKYCStatus(int userId) {
 
-        Integer previouslyCheckedUserId = previouslyCheckedUsers.get(userId);
+        Integer previouslyCheckedUserId = nonBlockedUsersCache.get(userId);
         if(previouslyCheckedUserId != null) {
             logger.info("User {} has previously been KYC approved", userId);
             return Result.success(previouslyCheckedUserId);
@@ -37,12 +37,12 @@ public class KYCService {
         if(blockedKYCUsers.contains(userId)) {
             var errorMessage = String.format("User %s is KYC blocked", userId);
             logger.info(errorMessage);
-            previouslyCheckedUsers.put(userId, KYCStatus.BLOCKED);
+            nonBlockedUsersCache.put(userId, KYCStatus.BLOCKED);
             return Result.failure(errorMessage);
         }
 
         logger.info("User {} is KYC approved, caching results", userId);
-        previouslyCheckedUsers.put(userId, KYCStatus.APPROVED);
+        nonBlockedUsersCache.put(userId, KYCStatus.APPROVED);
         return Result.success(KYCStatus.APPROVED);
     }
 }
