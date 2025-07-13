@@ -1,4 +1,4 @@
-package com.LukeLabs.PayMeAPI.models.documents;
+package com.LukeLabs.PayMeAPI.models.entities;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Document("spend")
-public class SpendDocument {
+public class SpendEntity {
     @Id
     private UUID ID;
     private UUID cardId;

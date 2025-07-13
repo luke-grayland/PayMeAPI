@@ -3,7 +3,7 @@ package com.LukeLabs.PayMeAPI.controllers;
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
 import com.LukeLabs.PayMeAPI.services.SpendProcessor;
-import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.BadRequestException;
+import com.LukeLabs.PayMeAPI.utilities.errorHandling.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

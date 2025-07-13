@@ -4,7 +4,7 @@ import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.responses.GetCardTransactionsResponse;
 import com.LukeLabs.PayMeAPI.services.TransactionProcessor;
-import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.BadRequestException;
+import com.LukeLabs.PayMeAPI.utilities.errorHandling.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

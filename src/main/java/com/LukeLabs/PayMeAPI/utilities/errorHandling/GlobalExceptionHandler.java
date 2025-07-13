@@ -1,4 +1,4 @@
-package com.LukeLabs.PayMeAPI.utilities.config.errorHandling;
+package com.LukeLabs.PayMeAPI.utilities.errorHandling;
 
 import com.LukeLabs.PayMeAPI.models.responses.ErrorResponse;
 import org.slf4j.Logger;

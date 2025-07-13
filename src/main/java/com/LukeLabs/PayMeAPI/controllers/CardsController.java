@@ -5,8 +5,8 @@ import java.util.concurrent.CompletableFuture;
 
 import com.LukeLabs.PayMeAPI.constants.SwaggerConstants;
 import com.LukeLabs.PayMeAPI.models.DTOs.CardDTO;
-import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.BadRequestException;
-import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.CardNotFoundException;
+import com.LukeLabs.PayMeAPI.utilities.errorHandling.BadRequestException;
+import com.LukeLabs.PayMeAPI.utilities.errorHandling.CardNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

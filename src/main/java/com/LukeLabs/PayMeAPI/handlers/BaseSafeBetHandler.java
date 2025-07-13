@@ -1,6 +1,6 @@
 package com.LukeLabs.PayMeAPI.handlers;
 
-import com.LukeLabs.PayMeAPI.models.documents.SpendDocument;
+import com.LukeLabs.PayMeAPI.models.entities.SpendEntity;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ public abstract class BaseSafeBetHandler implements SafeBetHandler{
         this.next = next;
     }
 
-    protected abstract SafeBetResult performCheck(List<SpendDocument> recentSpends);
+    protected abstract SafeBetResult performCheck(List<SpendEntity> recentSpends);
 
-    public SafeBetResult blockIsRequired(List<SpendDocument> recentSpends) {
+    public SafeBetResult blockIsRequired(List<SpendEntity> recentSpends) {
         SafeBetResult result = performCheck(recentSpends);
 
         if(result.blockIsRequired()) {
