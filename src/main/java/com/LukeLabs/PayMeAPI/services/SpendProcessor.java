@@ -6,8 +6,10 @@ import com.LukeLabs.PayMeAPI.handlers.*;
 import com.LukeLabs.PayMeAPI.mappers.SpendMapper;
 import com.LukeLabs.PayMeAPI.models.Result;
 import com.LukeLabs.PayMeAPI.models.Spend;
-import com.LukeLabs.PayMeAPI.models.documents.SpendDocument;
+import com.LukeLabs.PayMeAPI.models.entities.SpendEntity;
 import com.LukeLabs.PayMeAPI.models.requests.LogSpendRequest;
+import com.LukeLabs.PayMeAPI.repositories.CardRepository;
+import com.LukeLabs.PayMeAPI.repositories.KYCProfileRepository;
 import com.LukeLabs.PayMeAPI.repositories.SpendRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,16 +27,22 @@ public class SpendProcessor {
     private final CardStatusUpdateService cardStatusUpdateService;
     private final BlockedCardCheckService blockedCardCheckService;
     private final static int twentyFourHoursInMilliSeconds = 24 * 60 * 60 * 1000;
+    private final CardRepository cardRepository;
+    private final KYCProfileRepository kycProfileRepository;
 
     public SpendProcessor(SpendRepository spendRepository, SpendMapper spendMapper,
                           SpendNotificationService spendNotificationService,
                           CardStatusUpdateService cardStatusUpdateService,
-                          BlockedCardCheckService blockedCardCheckService) {
+                          BlockedCardCheckService blockedCardCheckService,
+                          CardRepository cardRepository,
+                          KYCProfileRepository kycProfileRepository) {
         this.spendRepository = spendRepository;
         this.spendMapper = spendMapper;
         this.spendNotificationService = spendNotificationService;
         this.cardStatusUpdateService = cardStatusUpdateService;
         this.blockedCardCheckService = blockedCardCheckService;
+        this.cardRepository = cardRepository;
+        this.kycProfileRepository = kycProfileRepository;
     }
 
     public Result<String> logSpend(LogSpendRequest request) {
@@ -48,7 +56,7 @@ public class SpendProcessor {
                 request.getDatetime())
                 .build();
 
-        SpendDocument spendDocument = spendMapper.toSpendDocument(newSpend);
+        SpendEntity spendDocument = spendMapper.toSpendDocument(newSpend);
         spendRepository.save(spendDocument);
 
         if(!SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
@@ -57,7 +65,7 @@ public class SpendProcessor {
         }
 
         var fromDateTime = new Date(System.currentTimeMillis() - twentyFourHoursInMilliSeconds);
-        List<SpendDocument> recentSpends = spendRepository
+        List<SpendEntity> recentSpends = spendRepository
                 .findSpendByCardIdInLastDay(request.getCardId(), fromDateTime);
 
         if(recentSpends.isEmpty()) {
@@ -68,7 +76,7 @@ public class SpendProcessor {
         //TODO: add configuration to allow for dependency injection
         var spendCountHandler = new SpendCountHandler();
         var spendLimitHandler = new SpendLimitHandler();
-        var salaryFractionHandler = new SalaryFractionHandler();
+        var salaryFractionHandler = new SalaryFractionHandler(kycProfileRepository, cardRepository);
 
         spendCountHandler.setNext(spendLimitHandler);
         spendLimitHandler.setNext(salaryFractionHandler);

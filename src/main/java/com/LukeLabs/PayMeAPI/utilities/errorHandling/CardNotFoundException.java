@@ -1,4 +1,4 @@
-package com.LukeLabs.PayMeAPI.utilities.config.errorHandling;
+package com.LukeLabs.PayMeAPI.utilities.errorHandling;
 
 public class CardNotFoundException extends RuntimeException{
     public CardNotFoundException(String errorMessage) {

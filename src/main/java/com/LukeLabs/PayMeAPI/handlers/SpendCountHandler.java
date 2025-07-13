@@ -1,7 +1,7 @@
 package com.LukeLabs.PayMeAPI.handlers;
 
 import com.LukeLabs.PayMeAPI.constants.SafeBetConstants;
-import com.LukeLabs.PayMeAPI.models.documents.SpendDocument;
+import com.LukeLabs.PayMeAPI.models.entities.SpendEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ public class SpendCountHandler extends BaseSafeBetHandler {
     private final Logger logger = LoggerFactory.getLogger(SpendCountHandler.class);
 
     @Override
-    protected SafeBetResult performCheck(List<SpendDocument> recentSpends) {
+    protected SafeBetResult performCheck(List<SpendEntity> recentSpends) {
 
         if(recentSpends.size() >= SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT) {
             logger.info("Recent spend count exceeds limit - SafeBet block required");

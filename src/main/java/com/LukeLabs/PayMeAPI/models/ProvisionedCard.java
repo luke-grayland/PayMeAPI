@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.LukeLabs.PayMeAPI.constants.CardStatusConstants;
 import com.LukeLabs.PayMeAPI.extensions.CardExtensions;
 import com.LukeLabs.PayMeAPI.services.CardNumberGenerator;
-import com.LukeLabs.PayMeAPI.utilities.config.errorHandling.InvalidCardStatusException;
+import com.LukeLabs.PayMeAPI.utilities.errorHandling.InvalidCardStatusException;
 import lombok.Data;
 
 @Data
