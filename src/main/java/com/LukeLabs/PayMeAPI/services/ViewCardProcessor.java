@@ -1,6 +1,7 @@
 package com.LukeLabs.PayMeAPI.services;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,10 +36,11 @@ public class ViewCardProcessor {
             .thenApply(cards -> {
                 logger.info("{} cards found", cards.size());
 
-                var response = new GetCardsByUserResponse();
                 var cardsByStartDate = cards.stream()
                         .sorted(Comparator.comparing(Card::getStartDate))
                         .map(cardMapper::toCardDTO).toList();
+
+                var response = new GetCardsByUserResponse();
                 response.setCards(cardsByStartDate);
                 return response;
             });
@@ -46,7 +48,7 @@ public class ViewCardProcessor {
 
     public Result<CardDTO> getCardByCardID(UUID cardID) {
         logger.info("Finding card with ID: {}", cardID);
-        var card = cardRepository.findById(cardID);
+        Optional<Card> card = cardRepository.findById(cardID);
 
         return card.map(value -> Result.success(cardMapper.toCardDTO(value)))
                 .orElseGet(() -> Result.failure("Card with ID " + cardID + " not found"));

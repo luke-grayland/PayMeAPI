@@ -26,7 +26,7 @@ public class SalaryFractionHandler extends BaseSafeBetHandler {
     }
 
     @Override
-    protected SafeBetResult performCheck(List<SpendEntity> recentSpends) {
+    public SafeBetResult performCheck(List<SpendEntity> recentSpends) {
         if(recentSpends.isEmpty()) {
             return new SafeBetResult(false, this);
         }

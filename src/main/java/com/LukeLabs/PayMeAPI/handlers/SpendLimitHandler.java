@@ -13,7 +13,7 @@ public class SpendLimitHandler extends BaseSafeBetHandler {
     private final Logger logger = LoggerFactory.getLogger(SpendLimitHandler.class);
 
     @Override
-    protected SafeBetResult performCheck(List<SpendEntity> recentSpends) {
+    public SafeBetResult performCheck(List<SpendEntity> recentSpends) {
 
         double spendTotal = 0;
         for (var spend : recentSpends) {

@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface SpendMapper {
-    SpendEntity toSpendDocument(Spend spend);
+    SpendEntity toSpendEntity(Spend spend);
 }

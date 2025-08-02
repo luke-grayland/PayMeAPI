@@ -57,8 +57,8 @@ public class SpendProcessor {
                 request.getDatetime())
                 .build();
 
-        SpendEntity spendDocument = spendMapper.toSpendDocument(newSpend);
-        spendRepository.save(spendDocument);
+        SpendEntity spendEntity = spendMapper.toSpendEntity(newSpend);
+        spendRepository.save(spendEntity);
 
         if(!SafeBetConstants.Categories.All.contains(request.getSpendCategory())) {
             spendNotificationService.QueueNotification(request.getCardId(), "Spend successfully stored");

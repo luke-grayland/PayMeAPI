@@ -13,7 +13,7 @@ public class SpendCountHandler extends BaseSafeBetHandler {
     private final Logger logger = LoggerFactory.getLogger(SpendCountHandler.class);
 
     @Override
-    protected SafeBetResult performCheck(List<SpendEntity> recentSpends) {
+    public SafeBetResult performCheck(List<SpendEntity> recentSpends) {
 
         if(recentSpends.size() >= SafeBetConstants.PER_DAY_SPEND_COUNT_LIMIT) {
             logger.info("Recent spend count exceeds limit - SafeBet block required");
