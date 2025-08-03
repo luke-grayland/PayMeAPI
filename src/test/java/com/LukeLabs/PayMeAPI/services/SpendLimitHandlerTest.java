@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class SpendLimitHandlerTest {
-    private SpendLimitHandler _sut;
+    private SpendLimitHandler sut;
 
     @BeforeEach
-    void setUp() {
-        _sut = new SpendLimitHandler();
+    void setup() {
+        sut = new SpendLimitHandler();
     }
 
     @Test
@@ -28,11 +28,11 @@ public class SpendLimitHandlerTest {
         List<SpendEntity> recentSpends = new ArrayList<>();
 
         //Act
-        SafeBetResult result = _sut.performCheck(recentSpends);
+        SafeBetResult result = sut.performCheck(recentSpends);
 
         //Assert
         assertFalse(result.blockIsRequired());
-        assertEquals(result.getHandler(), _sut);
+        assertEquals(result.getHandler(), sut);
     }
 
     @Test
@@ -48,11 +48,11 @@ public class SpendLimitHandlerTest {
         List<SpendEntity> recentSpends = new ArrayList<>(Arrays.asList(spendEntity1, spendEntity2));
 
         //Act
-        SafeBetResult result = _sut.performCheck(recentSpends);
+        SafeBetResult result = sut.performCheck(recentSpends);
 
         //Assert
         assertFalse(result.blockIsRequired());
-        assertEquals(result.handler(), _sut);
+        assertEquals(result.handler(), sut);
     }
 
     @Test
@@ -68,10 +68,10 @@ public class SpendLimitHandlerTest {
         List<SpendEntity> recentSpends = new ArrayList<>(Arrays.asList(spendEntity1, spendEntity2));
 
         //Act
-        SafeBetResult result = _sut.performCheck(recentSpends);
+        SafeBetResult result = sut.performCheck(recentSpends);
 
         //Assert
         assertTrue(result.blockIsRequired());
-        assertEquals(result.handler(), _sut);
+        assertEquals(result.handler(), sut);
     }
 }

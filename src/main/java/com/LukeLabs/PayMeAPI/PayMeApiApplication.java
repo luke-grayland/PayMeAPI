@@ -23,7 +23,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 				@Tag(name = SwaggerConstants.Tags.HealthCheck, description = "Confirm health status of API"),
 				@Tag(name = SwaggerConstants.Tags.Cards, description = "Create and manage cards"),
 				@Tag(name = SwaggerConstants.Tags.Transactions, description = "Find all file based transaction associated to a card"),
-				@Tag(name = SwaggerConstants.Tags.Spend, description = "Managee spend occurrences")
+				@Tag(name = SwaggerConstants.Tags.Spend, description = "Manage spend occurrences")
 		},
 		servers = {@Server(url = "/", description = "Default Server URL")}
 )

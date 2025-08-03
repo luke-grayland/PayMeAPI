@@ -22,7 +22,7 @@ public class SpendController {
     }
 
     @PostMapping
-    @Operation(summary = "Log spend", description = "Logs a spend against a card", tags = { SwaggerConstants.Tags.Spend })
+    @Operation(summary = "Store spend", description = "Stores a spend against a card", tags = { SwaggerConstants.Tags.Spend })
     public ResponseEntity<String> logSpend(@RequestBody @Valid LogSpendRequest request) {
         var result = logSpendProcessor.logSpend(request);
 
