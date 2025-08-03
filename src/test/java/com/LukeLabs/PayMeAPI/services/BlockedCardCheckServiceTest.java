@@ -20,12 +20,12 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class BlockedCardCheckServiceTest {
     private CardRepository cardRepository;
-    private BlockedCardCheckService _sut;
+    private BlockedCardCheckService sut;
 
     @BeforeEach
     public void setup() {
         cardRepository = mock(CardRepository.class);
-        _sut = new BlockedCardCheckService(cardRepository);
+        sut = new BlockedCardCheckService(cardRepository);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class BlockedCardCheckServiceTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.empty());
 
         //Act
-        Result<String> result =_sut.CheckByCardID(cardId);
+        Result<String> result = sut.CheckByCardID(cardId);
 
         //Assert
         assertFalse(result.isSuccess());
@@ -52,7 +52,7 @@ public class BlockedCardCheckServiceTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
 
         //Act
-        Result<String> result =_sut.CheckByCardID(cardId);
+        Result<String> result = sut.CheckByCardID(cardId);
 
         //Assert
         assertFalse(result.isSuccess());
@@ -74,7 +74,7 @@ public class BlockedCardCheckServiceTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
 
         //Act
-        Result<String> result =_sut.CheckByCardID(cardId);
+        Result<String> result = sut.CheckByCardID(cardId);
 
         //Assert
         assertTrue(result.isSuccess());

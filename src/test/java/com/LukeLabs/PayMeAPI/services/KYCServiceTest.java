@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class KYCServiceTest {
-    private KYCService _sut;
+    private KYCService sut;
 
     @BeforeEach
-    void setUp() {
-        _sut = new KYCService();
+    void setup() {
+        sut = new KYCService();
     }
 
     @Test
@@ -24,10 +24,10 @@ public class KYCServiceTest {
         int userId = 123;
         LimitedCache<Integer, Integer> previouslyCheckedUsers = new LimitedCache<>(1000);
         previouslyCheckedUsers.put(userId, KYCStatus.APPROVED);
-        _sut = new KYCService(previouslyCheckedUsers);
+        sut = new KYCService(previouslyCheckedUsers);
 
         //Act
-        Result<Integer> result = _sut.GetKYCStatus(userId);
+        Result<Integer> result = sut.GetKYCStatus(userId);
 
         //Assert
         assertTrue(result.isSuccess());
@@ -40,7 +40,7 @@ public class KYCServiceTest {
         int userId = 686;
 
         //Act
-        Result<Integer> result = _sut.GetKYCStatus(userId);
+        Result<Integer> result = sut.GetKYCStatus(userId);
 
         //Assert
         assertTrue(result.isSuccess());
@@ -53,7 +53,7 @@ public class KYCServiceTest {
         int userId = 789;
 
         //Act
-        Result<Integer> result = _sut.GetKYCStatus(userId);
+        Result<Integer> result = sut.GetKYCStatus(userId);
 
         //Assert
         assertFalse(result.isSuccess());
